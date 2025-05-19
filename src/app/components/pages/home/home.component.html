@@ -1,0 +1,108 @@
+<app-navbar [isLoggedIn]="false"></app-navbar>
+
+<app-hero 
+  title="Вместе мы можем изменить мир к лучшему"
+  description="Присоединяйтесь к сообществу волонтеров, находите интересные проекты и делайте добрые дела"
+  backgroundImage="https://images.unsplash.com/photo-1560252829-804f1aedf1be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80">
+</app-hero>
+
+
+<section class="section" id="events">
+    <div class="container">
+        <div class="section-header">
+            <h2>Актуальные мероприятия</h2>
+            <p>Выберите мероприятие, которое вам по душе, и присоединяйтесь к волонтерам</p>
+        </div>
+        
+        <!-- Состояние загрузки -->
+        <div *ngIf="loading" class="loading-spinner">
+            <p>Загрузка мероприятий...</p>
+        </div>
+        
+        <!-- Состояние ошибки -->
+        <div *ngIf="error" class="error-message">
+            <p>{{ error }}</p>
+            <button (click)="loadFeaturedEvents()">Попробовать снова</button>
+        </div>
+        
+        <div class="card-grid">
+            <!-- Если есть события -->
+            <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
+            
+            <!-- Если нет событий -->
+            <div *ngIf="!loading && !error && events.length === 0" class="no-events">
+                <p>В данный момент нет доступных мероприятий</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <a routerLink="/events" class="btn btn-primary">Смотреть все мероприятия</a>
+        </div>
+    </div>
+</section>
+
+<!-- How it works section -->
+<section class="section how-it-works" id="how-it-works">
+    <div class="container">
+        <div class="section-header">
+            <h2>Как это работает</h2>
+            <p>Всего несколько простых шагов, чтобы начать помогать</p>
+        </div>
+        <div class="steps">
+            <app-step-card title="Регистрация"
+                description="Создайте аккаунт на нашей платформе, укажите свои интересы и навыки"
+                iconClass="fas fa-user-plus">
+            </app-step-card>
+            <app-step-card title="Поиск мероприятий"
+                description="Найдите волонтерские мероприятия, которые соответствуют вашим интересам и графику"
+                iconClass="fas fa-search">
+            </app-step-card>
+            <app-step-card title="Регистрация на мероприятие"
+                description="Зарегистрируйтесь на выбранное мероприятие, получите всю необходимую информацию"
+                iconClass="fas fa-calendar-check">
+            </app-step-card>
+            <app-step-card title="Участие"
+                description="Примите участие в мероприятии, помогите другим и получите незабываемый опыт"
+                iconClass="fas fa-hands-helping">
+            </app-step-card>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials section -->
+<section class="section testimonials">
+    <div class="container">
+        <div class="section-header">
+            <h2>Отзывы волонтеров</h2>
+            <p>Что говорят участники наших мероприятий</p>
+        </div>
+        <div class="card-grid">
+            <!-- Если нет данных в массиве testimonials, показываем примеры -->
+            <div *ngIf="testimonials.length === 0">
+                <app-testimonial-card name="Анна" role="волонтер с 2022 года"
+                    imageUrl="https://randomuser.me/api/portraits/women/65.jpg"
+                    text="Присоединившись к ДоброДело, я нашла не только возможность помогать другим, но и единомышленников. Организация мероприятий всегда на высоте!">
+                </app-testimonial-card>
+            </div>
+            <div *ngIf="testimonials.length === 0">
+                <app-testimonial-card name="Михаил" role="организатор мероприятий"
+                    imageUrl="https://randomuser.me/api/portraits/men/32.jpg"
+                    text="Благодаря этой платформе я смог реализовать свой волонтерский проект и найти помощников. Сейчас наша команда постоянно растет!">
+                </app-testimonial-card>
+            </div>
+            <div *ngIf="testimonials.length === 0">
+                <app-testimonial-card name="Елена" role="волонтер с 2023 года"
+                    imageUrl="https://randomuser.me/api/portraits/women/44.jpg"
+                    text="Очень удобный сервис для поиска волонтерских мероприятий. Регистрация быстрая, интерфейс понятный, а главное - много интересных проектов.">
+                </app-testimonial-card>
+            </div>
+
+            <!-- Если есть данные в массиве testimonials, используем их -->
+            <app-testimonial-card *ngFor="let testimonial of testimonials" [name]="testimonial.name"
+                [role]="testimonial.role" [imageUrl]="testimonial.imageUrl" [text]="testimonial.text">
+            </app-testimonial-card>
+        </div>
+    </div>
+</section>
+
+<app-footer></app-footer>

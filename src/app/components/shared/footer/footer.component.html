@@ -1,0 +1,53 @@
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>О нас</h3>
+                <p>ДоброДело - платформа, которая объединяет волонтеров и организаторов мероприятий для создания
+                    лучшего будущего.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-vk"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Быстрые ссылки</h3>
+                <ul class="footer-links">
+                    <li><a [routerLink]="['/']">Главная</a></li>
+                    <li><a [routerLink]="['/']" fragment="events">Мероприятия</a></li>
+                    <li><a [routerLink]="['/']" fragment="how-it-works">Как это работает</a></li>
+                    <li><a href="#">О нас</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Контакты</h3>
+                <ul class="footer-links contact-info">
+                    <li><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Примерная, 123</li>
+                    <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+                    <li><i class="fas fa-envelope"></i> info&#64;dobrodel.ru</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Подписка на новости</h3>
+                <p>Получайте информацию о новых мероприятиях и возможностях</p>
+                <form class="newsletter-form" (ngSubmit)="$event.preventDefault()">
+                    <div class="form-group">
+                        <input type="email" placeholder="Ваш email" required>
+                        <button type="submit" class="btn btn-primary">Подписаться</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; {{ currentYear }} ДоброДело. Все права защищены.</p>
+        </div>
+        <div class="footer-bottom-links">
+            <a href="#">Политика конфиденциальности </a>
+            <a href="#"> Условия использования</a>
+        </div>
+    </div>
+</footer>

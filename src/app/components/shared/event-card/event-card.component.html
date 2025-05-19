@@ -1,0 +1,54 @@
+<div class="card">
+    <div class="card-img">
+        <img [src]="event.imageUrl" [alt]="event.title">
+        <span *ngIf="showStatus" class="event-status status-upcoming">{{event.status}}</span>
+        <span class="leaf-icon"><i class="fas fa-leaf"></i></span>
+    </div>
+    <div class="card-content">
+        <div class="card-date">{{ event.date }} | {{ event.time }}</div>
+        <h3>{{ event.title }}</h3>
+        <p>{{ event.description }}</p>
+        <p><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
+    </div>
+    
+    <div class="card-footer">
+    <span class="badge" [ngClass]="{'badge-success': !event.isUrgent, 'badge-danger': event.isUrgent}">
+        {{ event.isUrgent ? 'Срочно' : event.category }}
+    </span>
+    
+    <!-- Единая кнопка для всех -->
+    <button 
+        *ngIf="!isRegistered"
+        (click)="handleParticipation()"
+        class="participate-btn"
+        [disabled]="isLoading"
+        class="btn" >
+        Участвовать
+    </button>
+    
+    <span *ngIf="isRegistered" class="badge-registered">
+        Вы записаны
+    </span>
+</div>
+
+</div>
+
+<app-confirmation-modal 
+    [isOpen]="isModalOpen"
+    (confirmed)="confirmParticipation()"
+    (closed)="closeModal()"
+    [isLoading]="isLoading"
+>
+    <div class="modal-content">
+        <p>Вы уверены, что хотите записаться на событие <strong>{{ event.title }}</strong>?</p>
+        
+        <div *ngIf="isLoading" class="spinner-container">
+            <div class="spinner"></div>
+            <span>Идет запись...</span>
+        </div>
+        
+        <div *ngIf="registrationError" class="alert alert-danger">
+            {{ registrationError }}
+        </div>
+    </div>
+</app-confirmation-modal>

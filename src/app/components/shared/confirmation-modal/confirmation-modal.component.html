@@ -1,0 +1,22 @@
+<div class="modal-overlay" *ngIf="isOpen">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>{{ title }}</h3>
+            <button (click)="onClose()" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <ng-content></ng-content> <!-- Слот для контента -->
+        </div>
+        <div class="modal-footer">
+            <button (click)="onClose()" class="btn btn-outline">Отмена</button>
+            <button 
+    (click)="onConfirm()" 
+    class="btn btn-primary"
+    [disabled]="isLoading"
+>
+    <span *ngIf="!isLoading">Подтвердить</span>
+    <span *ngIf="isLoading">Обработка...</span>
+</button>
+        </div>
+    </div>
+</div>

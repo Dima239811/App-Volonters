@@ -1,0 +1,68 @@
+<app-navbar [isLoggedIn]="true"></app-navbar>
+
+<div class="container">
+  <!-- Personal Information with Photo -->
+  <div class="content-box">
+    <div class="section-title">
+      Личная информация
+      <button class="btn btn-outline" (click)="openEditModal()">Редактировать</button>
+    </div>
+    <div class="profile-container">
+      <div class="profile-image">
+        <img [src]="user.profileImage" alt="Фото профиля">
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Полное имя</label>
+          <p>{{ user.fullName }}</p>
+        </div>
+        <div class="info-item">
+          <label>Email</label>
+          <p>{{ user.email }}</p>
+        </div>
+        <div class="info-item">
+          <label>Телефон</label>
+          <p>{{ user.phone }}</p>
+        </div>
+        <div class="info-item">
+          <label>Город</label>
+          <p>{{ user.city }}</p>
+        </div>
+      </div>
+      <div class="about-section">
+        <div class="info-item">
+          <label>О себе</label>
+          <p>{{ user.aboutMe }}</p>
+        </div>
+        <div class="info-item" style="margin-top: 15px;">
+          <label>Интересы</label>
+          <div class="profile-badges" style="margin-top: 5px;">
+            <div class="badge-item" *ngFor="let interest of user.interests">{{ interest }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Events -->
+  <div class="content-box">
+    <div class="section-title">
+      Мои мероприятия
+      <a [routerLink]="['/']" fragment="events" class="btn btn-outline">Найти новые мероприятия</a>
+    </div>
+    <div class="event-list">
+      <app-event-card *ngFor="let event of userEvents" [event]="event" [showStatus]="true"></app-event-card>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+
+
+
+<app-edit-profile-modal
+  *ngIf="isEditing"
+  [user]="user"
+  (save)="saveProfile($event)"
+  (cancel)="closeEditModal()">
+</app-edit-profile-modal>

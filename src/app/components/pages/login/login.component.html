@@ -1,0 +1,38 @@
+<div class="auth-container">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Вход в аккаунт</h2>
+        <button class="close-modal" (click)="goBack()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="Введите ваш email" [(ngModel)]="loginData.email" name="email" required>
+            <div class="error-message" *ngIf="emailError">{{ emailError }}</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="login-password">Пароль</label>
+            <div class="password-field">
+              <input [type]="showPassword ? 'text' : 'password'" id="login-password" placeholder="Введите пароль" [(ngModel)]="loginData.password" name="password" required>
+              <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" (click)="togglePasswordVisibility()"></i>
+            </div>
+            <div class="error-message" *ngIf="passwordError">{{ passwordError }}</div>
+          </div>
+          
+          <div class="form-check">
+            <input type="checkbox" id="remember-me" [(ngModel)]="loginData.rememberMe" name="rememberMe">
+            <label for="remember-me">Запомнить меня</label>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+        </form>
+        
+        <div class="form-footer">
+          <p>Еще нет аккаунта? <a [routerLink]="['/register']">Зарегистрируйтесь</a></p>
+          <p style="margin-top: 10px;"><a href="#">Забыли пароль?</a></p>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,84 @@
+<div class="modal-backdrop">
+  <div class="modal-content">
+    <button class="close-button" (click)="cancel.emit()">×</button>
+    <h2>Редактировать профиль</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSave()">
+      <div class="form-group image-upload">
+        <label>Фото профиля</label>
+        
+        <div class="image-preview-container">
+          <div
+            class="drop-area"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+            [class.dragging]="isDragging"
+          >
+            <div *ngIf="!previewImage" class="upload-prompt">
+              <i class="upload-icon">📤</i>
+              <p>Перетащите фото сюда или</p>
+              <button type="button" class="browse-button" (click)="fileInputRef.nativeElement.click()">
+                Выберите файл
+              </button>
+              <p class="file-types">Поддерживаемые форматы: JPG, PNG</p>
+            </div>
+
+            <div *ngIf="previewImage" class="preview-wrapper">
+              <img [src]="previewImage" alt="Превью" class="preview-image" />
+              <div class="preview-overlay">
+                <button type="button" class="change-image-button" (click)="fileInputRef.nativeElement.click()">
+                  Изменить
+                </button>
+                <button type="button" class="remove-image-button" (click)="clearImage()">
+                  Удалить
+                </button>
+              </div>
+            </div>
+
+            <input #fileInput type="file" accept="image/jpeg, image/png" hidden (change)="onFileSelected($event)" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">Полное имя</label>
+        <input id="fullName" type="text" formControlName="fullName" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Телефон</label>
+        <input id="phone" type="tel" formControlName="phone" />
+      </div>
+
+      <div class="form-group">
+        <label for="city">Город</label>
+        <input id="city" type="text" formControlName="city" />
+      </div>
+
+      <div class="form-group">
+        <label for="aboutMe">О себе</label>
+        <textarea id="aboutMe" formControlName="aboutMe" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="interests">Интересы (через запятую)</label>
+        <input id="interests" type="text" formControlName="interests" placeholder="Например: путешествия, музыка, спорт" />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-button" [disabled]="form.invalid">
+          Сохранить изменения
+        </button>
+        <button type="button" class="cancel-button" (click)="cancel.emit()">
+          Отмена
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
