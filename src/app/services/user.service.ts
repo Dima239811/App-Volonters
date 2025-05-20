@@ -43,16 +43,23 @@ import { Event } from '../models/event.model';
       return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
 
-    login(email: string, password: string): Observable<any> {
+    /* login(email: string, password: string): Observable<any> {
         return this.http.get(`${this.apiUrl2}/users?email=${email}&password=${password}`).pipe(
           catchError(error => {
             console.error('Login error:', error);
             return throwError(() => new Error('Ошибка при входе. Пожалуйста, попробуйте позже.'));
           })
         );
+      } */
+
+      login(email: string): Observable<User[]> {
+        return this.http.get<User[]>(`${this.apiUrl}?email=${email}`).pipe(
+          catchError(error => {
+            console.error('Login error:', error);
+            return throwError(() => new Error('Ошибка при входе. Пожалуйста, попробуйте позже.'));
+          })
+        );
       }
-
-
   
     }
 

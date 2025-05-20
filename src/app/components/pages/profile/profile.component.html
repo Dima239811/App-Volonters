@@ -9,7 +9,7 @@
     </div>
     <div class="profile-container">
       <div class="profile-image">
-        <img [src]="user.profileImage" alt="Фото профиля">
+        <img *ngIf="user.profileImage" [src]="getProfileImageUrl(user.profileImage)" alt="Фото профиля">
       </div>
       <div class="info-grid">
         <div class="info-item">

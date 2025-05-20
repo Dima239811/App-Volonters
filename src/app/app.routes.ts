@@ -5,6 +5,7 @@ import { LoginComponent } from './components/pages/login/login.component';
 import { RegistrationComponent } from './components/pages/registration/registration.component';
 import { ErrorComponent } from './components/pages/error/error.component';
 import { ProfileComponent } from './components/pages/profile/profile.component';
+import { AdminEventsComponent } from './components/shared/admin-events/admin-events.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: 'register', component: RegistrationComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'error', component: ErrorComponent },
+  { path: 'admin', component: AdminEventsComponent},
   { path: '**', redirectTo: '' },
 ];
 

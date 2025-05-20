@@ -1,0 +1,89 @@
+<div class="admin-events">
+  <h2>Создать новое событие</h2>
+  <form [formGroup]="eventForm" (ngSubmit)="submitEvent()">
+    <div>
+      <label for="title">Название события:</label>
+      <input id="title" formControlName="title" required>
+    </div>
+    <div>
+      <label for="description">Описание:</label>
+      <textarea id="description" formControlName="description" required></textarea>
+    </div>
+    <div>
+      <label for="date">Дата:</label>
+      <input id="date" type="date" formControlName="date" required>
+    </div>
+    <div>
+      <label for="time">Время:</label>
+      <input id="time" type="time" formControlName="time" required>
+    </div>
+    <div>
+      <label for="location">Место проведения:</label>
+      <input id="location" formControlName="location" required>
+    </div>
+    <div>
+      <label for="category">Категория:</label>
+      <input id="category" formControlName="category" required>
+    </div>
+    <div>
+      <label for="isUrgent">Срочно?</label>
+      <select id="isUrgent" formControlName="isUrgent">
+        <option value="нет">Нет</option>
+        <option value="да">Да</option>
+      </select>
+    </div>
+    <div>
+      <label for="status">Статус:</label>
+      <select id="status" formControlName="status">
+        <option value="активно">Активно</option>
+        <option value="завершено">Завершено</option>
+      </select>
+    </div>
+    <div>
+      <label>Изображение события:</label>
+      <input type="file" (change)="onFileSelected($event)" [disabled]="uploadInProgress">
+      <span *ngIf="uploadedImageUrl" style="color:green;">Изображение загружено</span>
+      <span *ngIf="uploadError" style="color:red;">{{uploadError}}</span>
+      <div *ngIf="uploadedImageUrl" style="margin-top:10px">
+        <img [src]="uploadedImageUrl" alt="Превью" style="max-width:200px;">
+      </div>
+    </div>
+    <button type="submit" [disabled]="eventForm.invalid || uploadInProgress" class="btn btn-primary">Создать событие</button>
+    <span *ngIf="createError" style="color:red;">{{createError}}</span>
+  </form>
+
+  <hr>
+
+  <section class="section" id="events">
+  <div class="container">
+    <div class="section-header">
+      <h2>Актуальные мероприятия</h2>
+      <p>Выберите мероприятие, которое вам по душе, и присоединяйтесь к волонтерам</p>
+    </div>
+    
+    <!-- Состояние загрузки -->
+    <div *ngIf="loading" class="loading-spinner">
+      <p>Загрузка мероприятий...</p>
+    </div>
+    
+    <!-- Состояние ошибки -->
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="loadEvents()">Попробовать снова</button>
+    </div>
+    
+    <div class="card-grid">
+      <!-- Если есть события -->
+      <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
+      
+      <!-- Если нет событий -->
+      <div *ngIf="!loading && !error && events.length === 0" class="no-events">
+        <p>В данный момент нет доступных мероприятий</p>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px;">
+      <a routerLink="/events" class="btn btn-primary">Смотреть все мероприятия</a>
+    </div>
+  </div>
+</section>

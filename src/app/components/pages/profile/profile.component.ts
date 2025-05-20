@@ -61,6 +61,7 @@ export class ProfileComponent implements OnInit {
         this.user = user;
         this.profileService.setCurrentUser(user);
         this.loading = false;
+        console.log(this.user.profileImage)
       },
       error: (err) => {
         this.error = 'Не удалось загрузить данные пользователя';
@@ -97,12 +98,21 @@ export class ProfileComponent implements OnInit {
     this.isEditing = false;
   }
 
+  getProfileImageUrl(imgPath: string | undefined): string {
+  if (!imgPath) return '';
+  return imgPath.startsWith('http') ? imgPath : 'http://localhost:4000' + imgPath;
+}
+
   saveProfile(updatedFields: Partial<User>): void {
     if (!this.user?.id) return;
 
     this.userService.updateUser(this.user.id, updatedFields).subscribe({
       next: (updatedUser) => {
-        this.user = { ...this.user, ...updatedUser };
+        //this.user = { ...this.user, ...updatedUser };
+        if (this.user.id) {
+          this.loadUserData(this.user.id);
+        }
+        
         this.closeEditModal();
       },
       error: (err) => {

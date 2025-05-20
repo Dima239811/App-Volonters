@@ -6,11 +6,14 @@ import {
   ViewChild,
   ElementRef,
   OnInit,
-  SimpleChanges, OnChanges
+  SimpleChanges,
+  OnChanges,
+  inject
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
+import { UploadService } from '../../../services/upload.service';
 
 @Component({
   selector: 'app-edit-profile-modal',
@@ -18,8 +21,6 @@ import { CommonModule } from '@angular/common';
   imports: [ReactiveFormsModule, CommonModule],
   styleUrl: './edit-profile-modal.component.css'
 })
-
-
 export class EditProfileModalComponent implements OnInit, OnChanges {
   @Input() user!: User;
   @Output() save = new EventEmitter<Partial<User>>();
@@ -29,7 +30,7 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
   form: FormGroup;
   previewImage: string | null = null;
   isDragging = false;
-  private readonly IMAGE_STORAGE_KEY = 'user_profile_image';
+  private uploadService: UploadService = inject(UploadService);
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -44,21 +45,34 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.loadImageFromStorage();
+    if (this.user) {
+      this.patchUser();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['user'] && this.user) {
-      this.form.patchValue({
-        fullName: this.user.fullName,
-        email: this.user.email,
-        phone: this.user.phone || '',
-        city: this.user.city || '',
-        aboutMe: this.user.aboutMe || '',
-        interests: this.user.interests?.join(', ') || ''
-      });
+      this.patchUser();
+    }
+  }
 
-      this.previewImage = this.user.profileImage || this.loadImageFromStorage();
+  private patchUser() {
+    this.form.patchValue({
+      fullName: this.user.fullName,
+      email: this.user.email,
+      phone: this.user.phone || '',
+      city: this.user.city || '',
+      aboutMe: this.user.aboutMe || '',
+      interests: this.user.interests?.join(', ') || '',
+      profileImage: this.user.profileImage || ''
+    });
+
+    if (this.user.profileImage) {
+      // если profileImage хранится как '/uploads/файл.jpg'
+      this.previewImage = 'http://localhost:4000' + this.user.profileImage;
+      // если хранится как полный url, просто: this.previewImage = this.user.profileImage;
+    } else {
+      this.previewImage = null;
     }
   }
 
@@ -77,83 +91,27 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
     this.isDragging = false;
     const file = event.dataTransfer?.files?.[0];
     if (file) {
-      this.processImageFile(file);
+      this.onFileSelected({ target: { files: [file] } } as any);
     }
   }
 
   onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) {
-      this.processImageFile(file);
-    }
-  }
-
-  private async processImageFile(file: File): Promise<void> {
-    try {
-      const optimizedImage = await this.compressImage(file);
-      this.previewImage = optimizedImage;
-      this.form.patchValue({ profileImage: optimizedImage });
-      this.saveImageToStorage(optimizedImage);
-    } catch (error) {
-      console.error('Error processing image:', error);
-    }
-  }
-
-  private compressImage(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target?.result as string;
-
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-
-          // Устанавливаем максимальные размеры
-          const MAX_WIDTH = 800;
-          const MAX_HEIGHT = 800;
-          let width = img.width;
-          let height = img.height;
-
-          // Изменяем размеры, если нужно
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-
-          // Рисуем сжатое изображение
-          ctx?.drawImage(img, 0, 0, width, height);
-
-          // Конвертируем в base64 с качеством 70%
-          resolve(canvas.toDataURL('image/jpeg', 0.7));
-        };
-
-        img.onerror = () => reject(new Error('Failed to load image'));
-      };
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsDataURL(file);
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (file) {
+    // Передаём старое фото (если оно есть)
+    const oldImage = this.form.value.profileImage || '';
+    this.uploadService.uploadProfileImage(file).subscribe({
+      next: (response) => {
+        this.form.patchValue({ profileImage: response.url });
+        this.previewImage = 'http://localhost:4000' + response.url;
+      },
+      error: (err) => {
+        console.error('Ошибка загрузки:', err);
+      }
     });
   }
-
-  private saveImageToStorage(imageData: string): void {
-    localStorage.setItem(this.IMAGE_STORAGE_KEY, imageData);
-  }
-
-  private loadImageFromStorage(): string | null {
-    return localStorage.getItem(this.IMAGE_STORAGE_KEY);
-  }
+}
 
   onSave(): void {
     const formValue = this.form.value;
@@ -167,6 +125,5 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
   clearImage(): void {
     this.previewImage = null;
     this.form.patchValue({ profileImage: '' });
-    localStorage.removeItem(this.IMAGE_STORAGE_KEY);
   }
 }

@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { User } from '../../../models/user.model';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
-
+import * as bcrypt from 'bcryptjs';
 
 @Component({
   selector: 'app-registration',
@@ -123,6 +123,9 @@ export class RegistrationComponent {
           this.errors.email = 'Пользователь с таким email уже зарегистрирован';
           this.isLoading = false;
         } else {
+           // ✅ Хэшируем пароль перед отправкой на сервер
+          const hashedPassword = bcrypt.hashSync(this.userData.password, 10);
+          this.userData.password = hashedPassword;
           // Создаем нового пользователя
           this.userService.createUser(this.userData).subscribe({
             next: (newUser) => {
