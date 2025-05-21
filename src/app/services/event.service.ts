@@ -9,7 +9,7 @@ import { Event } from '../models/event.model';
 })
 export class EventService {
   private apiUrl = 'http://localhost:3000'; // Базовый URL для json-server
-
+  private fileApiUrl = 'http://localhost:4000/api'; // Express
   constructor(private http: HttpClient) {}
 
   // Получить все события
@@ -37,10 +37,23 @@ export class EventService {
     return this.http.put<Event>(`${this.apiUrl}/events/${id}`, event);
   }
 
-  // Удалить событие
-  deleteEvent(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/events/${id}`);
+  // Новый метод!
+  deleteEventWithImage(event: Event): Observable<void> {
+    if (!event.imageUrl) {
+      // Если картинки нет — просто удаляем событие
+      return this.http.delete<void>(`${this.apiUrl}/events/${event.id}`);
+    }
+    return this.http.delete(`${this.fileApiUrl}/delete/event-image`, { body: { imageUrl: event.imageUrl } }).pipe(
+      switchMap(() => this.http.delete<void>(`${this.apiUrl}/events/${event.id}`)),
+      // Даже если ошибка при удалении файла — событие всё равно удаляем
+      catchError(() => this.http.delete<void>(`${this.apiUrl}/events/${event.id}`))
+    );
   }
+
+  // Удалить событие
+  /* deleteEvent(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/events/${id}`);
+  } */
 
   // Записать пользователя на событие
   addParticipant(eventId: number, userId: number): Observable<Event> {

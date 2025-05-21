@@ -82,15 +82,20 @@ export class LoginComponent {
           return;
         }
 
-        // Сравниваем введенный пароль с хэшем из базы
         if (bcrypt.compareSync(plainPassword, user.password)) {
-          const storage = this.loginData.rememberMe ? localStorage : sessionStorage;
-          storage.setItem('currentUser', JSON.stringify(user));
-          this.authService.login(user.id);
-          this.router.navigate(['/profile']);
+  const storage = this.loginData.rememberMe ? localStorage : sessionStorage;
+  storage.setItem('currentUser', JSON.stringify(user));
+  this.authService.login(user);
+
+        // Перенаправление по роли:
+        if (user.role === 'organization') {
+          this.router.navigate(['/admin']); // Страница админа
         } else {
-          this.emailError = 'Неверный email или пароль';
+          this.router.navigate(['/profile']); // Обычные пользователи
         }
+      } else {
+        this.emailError = 'Неверный email или пароль';
+      }
       } else {
         this.emailError = 'Неверный email или пароль';
       }

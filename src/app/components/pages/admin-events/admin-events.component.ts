@@ -5,14 +5,15 @@ import { EventService } from '../../../services/event.service';
 /* import { Event } from '../../../models/event.model'; */
 import { UploadService } from '../../../services/upload.service';
 import { Event as EventModel } from '../../../models/event.model';
-import { EventCardComponent } from '../event-card/event-card.component';
+import { EventCardComponent } from '../../shared/event-card/event-card.component';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-admin-events',
   standalone: true,
   templateUrl: './admin-events.component.html',
   styleUrls: ['./admin-events.component.css'],
-  imports: [CommonModule, ReactiveFormsModule, EventCardComponent]
+  imports: [CommonModule, ReactiveFormsModule, EventCardComponent, NavbarComponent]
 })
 export class AdminEventsComponent implements OnInit {
   eventForm: FormGroup;
@@ -23,6 +24,7 @@ export class AdminEventsComponent implements OnInit {
   createError = '';
    loading = false;
   error: string | null = null;
+  
 
   constructor(
     private fb: FormBuilder,
@@ -79,6 +81,7 @@ export class AdminEventsComponent implements OnInit {
 
   submitEvent(): void {
     if (this.eventForm.invalid) return;
+    console.log(this.eventForm.value);
     this.createError = '';
     this.eventService.createEvent(this.eventForm.value).subscribe({
       next: () => {
@@ -96,4 +99,8 @@ export class AdminEventsComponent implements OnInit {
     if (!imgPath) return 'assets/no-event-img.png';
     return imgPath.startsWith('http') ? imgPath : 'http://localhost:4000' + imgPath;
   }
+
+  onEventDeleted() {
+    this.loadEvents();
+}
 }

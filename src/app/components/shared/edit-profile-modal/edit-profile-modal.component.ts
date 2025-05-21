@@ -14,6 +14,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { UploadService } from '../../../services/upload.service';
+import { ProfileService } from '../../../services/profile.service';
 
 @Component({
   selector: 'app-edit-profile-modal',
@@ -31,8 +32,9 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
   previewImage: string | null = null;
   isDragging = false;
   private uploadService: UploadService = inject(UploadService);
+  oldProfileImage: string | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private profileSevice: ProfileService) {
     this.form = this.fb.group({
       fullName: [''],
       email: [''],
@@ -99,8 +101,8 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
   if (file) {
-    // Передаём старое фото (если оно есть)
-    const oldImage = this.form.value.profileImage || '';
+    // Сохраняем старое фото для удаления при onSave
+    this.oldProfileImage = this.form.value.profileImage || null;
     this.uploadService.uploadProfileImage(file).subscribe({
       next: (response) => {
         this.form.patchValue({ profileImage: response.url });
@@ -114,16 +116,44 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
 }
 
   onSave(): void {
-    const formValue = this.form.value;
-    const updatedUser: Partial<User> = {
-      ...formValue,
-      interests: formValue.interests?.split(',').map((i: string) => i.trim()) || []
-    };
+  const formValue = this.form.value;
+  const updatedUser: Partial<User> = {
+    ...formValue,
+    interests: formValue.interests?.split(',').map((i: string) => i.trim()) || []
+  };
+
+  // Тут можно добавить удаление старого фото, если оно было (опционально)
+  if (this.user.id && this.oldProfileImage) {
+    this.profileSevice.updateUserWithProfileImageDelete(
+      this.user.id,
+      updatedUser,
+      this.oldProfileImage
+    ).subscribe({
+      next: (user) => {
+        this.save.emit(updatedUser);
+      },
+      error: (err) => {
+        console.error('Ошибка при обновлении профиля:', err);
+      }
+    });
+    this.oldProfileImage = null;
+  } else {
     this.save.emit(updatedUser);
   }
+}
 
   clearImage(): void {
+    const oldImage = this.form.value.profileImage || '';
     this.previewImage = null;
     this.form.patchValue({ profileImage: '' });
+
+    if (oldImage) {
+      this.uploadService.deleteProfileImage(oldImage).subscribe({
+        next: () => this.save.emit({ profileImage: '' }),
+        error: (err) => {
+          console.error('Ошибка удаления файла:', err);
+        }
+      });
+    } 
   }
 }

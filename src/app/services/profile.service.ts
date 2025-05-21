@@ -4,6 +4,7 @@ import { Observable, catchError, throwError, of, switchMap, tap } from 'rxjs';
 import { User } from '../models/user.model';
 import { Event } from '../models/event.model';
 import { map } from 'rxjs';
+import { UploadService } from './upload.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,7 +12,7 @@ export class ProfileService {
   private apiUrl = 'http://localhost:3000';
   private readonly USER_KEY = 'currentUser';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private uploadService: UploadService) { }
 
   /**
    * Получение текущего пользователя из sessionStorage
@@ -109,4 +110,24 @@ export class ProfileService {
     console.error('Произошла ошибка:', error);
     return throwError(() => new Error('Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.'));
   }
+
+
+  updateUserWithProfileImageDelete(userId: number, updatedFields: Partial<User>, oldImageUrl?: string): Observable<User> {
+    if (oldImageUrl) {
+      // Сначала удалить старую картинку, потом обновить профиль
+      return this.uploadService.deleteProfileImage(oldImageUrl).pipe(
+        switchMap(() =>
+          this.http.patch<User>(`${this.apiUrl}/users/${userId}`, updatedFields)
+        ),
+        catchError(() =>
+          // Даже если картинку не удалось удалить, всё равно обновляем профиль
+          this.http.patch<User>(`${this.apiUrl}/users/${userId}`, updatedFields)
+        )
+      );
+    } else {
+      // Просто обновить профиль
+      return this.http.patch<User>(`${this.apiUrl}/users/${userId}`, updatedFields);
+    }
+  }
+
 }

@@ -1,12 +1,29 @@
 {
   "users": [
     {
-      "id": "c12a",
+      "id": "56bd",
+      "fullName": "Чекалин Дмитрий Сергеевич",
+      "email": "admin@mail.ru",
+      "phone": "9056152311",
+      "city": "ffff",
+      "password": "$2b$10$ZaeUeig/gTaZTI7CSQKuDeh/PYDIQbiDOFGbZEW7YdOcc6MHzXnD.",
+      "eventIds": [],
+      "aboutMe": "",
+      "interests": [
+        "animals"
+      ],
+      "role": "organization",
+      "agreeTerms": true,
+      "agreeNewsletter": true,
+      "profileImage": ""
+    },
+    {
+      "id": "9b60",
       "fullName": "Чекалин Дмитрий Сергеевич",
       "email": "user@mail.ru",
       "phone": "9056152311",
       "city": "тирпрп",
-      "password": "$2b$10$luH9.zdkmoi5leJAWXR3YeB.V7RrSOD4ZPcCUsWhXK3zcdDF9SIcq",
+      "password": "$2b$10$98f.tWk7XFaPiH4R4juzX.3t6D9.lleWK2wGcCG3Juh6ZJFM7dmiu",
       "eventIds": [],
       "aboutMe": "",
       "interests": [
@@ -15,67 +32,8 @@
       "role": "volunteer",
       "agreeTerms": true,
       "agreeNewsletter": true,
-      "profileImage": "/uploads/profile/1747741913385-536883523.jpg"
+      "profileImage": "/uploads/profile/1747747667554-114914567.jpg"
     }
   ],
-  "events": [
-    {
-      "id": "1",
-      "title": "Уборка Городского парка",
-      "description": "Приглашаем всех желающих принять участие в уборке территории Городского парка. Все необходимые инструменты будут предоставлены.",
-      "date": "2023-09-25",
-      "time": "10:00",
-      "location": "Городской парк, ул. Ленина, 15",
-      "category": "ecology",
-      "imageUrl": "https://picsum.photos/id/1029/800/600",
-      "participantIds": []
-    },
-    {
-      "id": "2",
-      "title": "Помощь приюту для животных",
-      "description": "Нужны волонтеры для помощи в приюте для бездомных животных: выгул собак, кормление, уборка. Приходите с добрым сердцем!",
-      "date": "2023-09-30",
-      "time": "12:00",
-      "location": "Приют 'Друг', ул. Сосновая, 42",
-      "category": "animals",
-      "imageUrl": "https://picsum.photos/id/237/800/600",
-      "participantIds": []
-    },
-    {
-      "id": "3",
-      "title": "Занятия по математике с детьми",
-      "description": "Требуются волонтеры для проведения дополнительных занятий по математике с детьми из малообеспеченных семей.",
-      "date": "2023-10-02",
-      "time": "15:00",
-      "location": "Центр социальной помощи, пр. Мира, 27",
-      "category": "education",
-      "imageUrl": "https://picsum.photos/id/99/800/600",
-      "participantIds": [],
-      "status": "pedik"
-    },
-    {
-      "id": "4",
-      "title": "Занятия по боксу",
-      "description": "Требуются волонтеры для проведения дополнительных занятий по махачу.",
-      "date": "2025-10-02",
-      "time": "15:00",
-      "location": "Архангельск, пр. Мира, 127",
-      "category": "education",
-      "imageUrl": "/assets/images/IMG_20230417_WA0007.jpg",
-      "participantIds": [],
-      "status": "петушня"
-    },
-    {
-      "id": "01e3",
-      "title": "новое событие",
-      "description": "ааааа",
-      "date": "2025-05-24",
-      "time": "12:23",
-      "location": "ввв",
-      "category": "вввв",
-      "imageUrl": "/uploads/events/1747742820456-20462108.jpg",
-      "isUrgent": "да",
-      "status": "активно"
-    }
-  ]
+  "events": []
 }

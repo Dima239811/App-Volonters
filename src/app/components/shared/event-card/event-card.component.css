@@ -83,8 +83,20 @@
   border-top: 1px solid #eee;
 }
 
-.card-footer .btn {
-  padding: 8px 15px;
+.card-footer .btn,
+.card-footer button {
+  margin-left: 10px; /* отступ слева */
+}
+
+.card-footer > :first-child {
+  margin-left: 0; /* первый элемент (например, badge) без отступа */
+}
+
+/* Немного уменьшаем ширину самой карточки */
+.card {
+  max-width: 320px; /* или поставь другое нужное значение */
+  width: 100%;
+  margin: 0 auto;
 }
 
 
@@ -123,4 +135,27 @@
   padding: 8px;
   border-radius: 4px;
   margin-top: 10px;
+}
+
+
+/* Красная кнопка "Удалить" для организатора */
+.btn-danger,
+.participate-btn.btn-danger {
+  background-color: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 8px 15px;
+  box-shadow: 0 1px 4px rgba(229, 57, 53, 0.14);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+  cursor: pointer;
+}
+
+.btn-danger:hover,
+.participate-btn.btn-danger:hover {
+  background-color: #b71c1c;
+  box-shadow: 0 3px 12px rgba(229, 57, 53, 0.18);
+  transform: translateY(-1px) scale(1.03);
 }

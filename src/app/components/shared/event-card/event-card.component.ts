@@ -1,4 +1,4 @@
-import { Component, Input, inject, OnInit } from '@angular/core';
+import { Component, Input, inject, OnInit, Output, EventEmitter } from '@angular/core';
 import { Event } from '../../../models/event.model';
 import { NgClass, NgIf } from '@angular/common';
 import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
@@ -23,6 +23,7 @@ export class EventCardComponent {
   @Input() event!: Event;
   @Input() showStatus: boolean = false;
   @Input() currentUserId!: number | null;
+  @Output() eventDeleted = new EventEmitter<void>();
 
   isModalOpen = false;
   isLoading = false;
@@ -130,6 +131,36 @@ export class EventCardComponent {
       return 'Вы уже записаны на это событие';
     }
     return error.message || 'Произошла ошибка при записи';
+  }
+
+  hasOrganizationStatus() {
+    return this.authService.hasRole('organization')
+  }
+
+  getEventImageUrl(imgPath: string | undefined): string {
+  if (!imgPath) return 'assets/no-event-img.png';
+  // Если путь уже абсолютный — не добавляем ещё раз
+  return imgPath.startsWith('http') ?
+    imgPath :
+    'http://localhost:4000' + imgPath;
+}
+
+  handleEventDelete(): void {
+    if (confirm(`Удалить событие "${this.event?.title}"?`)) {
+      this.isLoading = true;
+      if (this.event.id) {
+        this.eventService.deleteEventWithImage(this.event)
+          .pipe(finalize(() => this.isLoading = false))
+          .subscribe({
+            next: () => {
+              this.eventDeleted.emit(); // Сообщаем родителю
+            },
+            error: (err: any) => {
+              alert('Ошибка удаления: ' + (err.error?.message || err.message));
+            }
+          });
+      }
+    }
   }
 
 }

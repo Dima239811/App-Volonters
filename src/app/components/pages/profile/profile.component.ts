@@ -10,7 +10,8 @@ import { RouterModule } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EditProfileModalComponent } from '../../shared/edit-profile-modal/edit-profile-modal.component';
-
+import { AuthService } from '../../../services/auth.service';
+import { UploadService } from '../../../services/upload.service';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -39,7 +40,9 @@ export class ProfileComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
-  constructor(private profileService: ProfileService, private userService: UserService) {}
+  constructor(private profileService: ProfileService, private userService: UserService
+    ,private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     const currentUser = this.profileService.getCurrentUser();
@@ -104,20 +107,31 @@ export class ProfileComponent implements OnInit {
 }
 
   saveProfile(updatedFields: Partial<User>): void {
-    if (!this.user?.id) return;
+  if (!this.user?.id) return;
 
-    this.userService.updateUser(this.user.id, updatedFields).subscribe({
-      next: (updatedUser) => {
-        //this.user = { ...this.user, ...updatedUser };
-        if (this.user.id) {
-          this.loadUserData(this.user.id);
-        }
-        
-        this.closeEditModal();
-      },
-      error: (err) => {
-        console.error('Ошибка при обновлении профиля:', err);
+  // --- Оптимистичное обновление (фото исчезает сразу) ---
+  const prevUser = { ...this.user }; // Сохраняем предыдущее состояние для отката
+  this.user = { ...this.user, ...updatedFields };
+
+
+  this.userService.updateUser(this.user.id!, updatedFields).subscribe({
+    next: (updatedUser) => {
+      if (this.user.id) {
+        this.loadUserData(this.user.id); // Теперь ошибка исчезнет!
       }
-    });
+      this.closeEditModal();
+    },
+    error: (err) => {
+      // Откат при ошибке
+      this.user = prevUser;
+      console.error('Ошибка при обновлении профиля:', err);
+      alert('Не удалось обновить профиль');
+    }
+  });
+}
+
+  isAdmin() {
+    return this.authService.hasRole('organization');
   }
+
 }

@@ -8,11 +8,6 @@ import { Observable } from 'rxjs';
 export class UploadService {
  constructor(private http: HttpClient) {}
   private apiUrl = 'http://localhost:4000';
-  /* uploadImage(file: File): Observable<{ url: string }> {
-    const formData = new FormData();
-    formData.append('image', file); // 'image' — то же имя, что в backend
-    return this.http.post<{ url: string }>('http://localhost:4000/api/upload', formData);
-  } */
 
   uploadProfileImage(file: File): Observable<{ url: string }> {
     const formData = new FormData();
@@ -25,4 +20,10 @@ export class UploadService {
     formData.append('image', file);
     return this.http.post<{ url: string }>(`${this.apiUrl}/api/upload/event`, formData);
   }
+
+  deleteProfileImage(imageUrl: string) {
+  return this.http.delete('http://localhost:4000/api/delete/profile-image', {
+    body: { imageUrl }
+  });
+}
 }

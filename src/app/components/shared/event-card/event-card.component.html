@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-img">
-        <img [src]="event.imageUrl" [alt]="event.title">
+        <img [src]="getEventImageUrl(event.imageUrl)" [alt]="event.title">
         <span *ngIf="showStatus" class="event-status status-upcoming">{{event.status}}</span>
         <span class="leaf-icon"><i class="fas fa-leaf"></i></span>
     </div>
@@ -16,14 +16,25 @@
         {{ event.isUrgent ? 'Срочно' : event.category }}
     </span>
     
-    <!-- Единая кнопка для всех -->
+    <!-- Кнопка для волонтёра или неавторизованного -->
+<button 
+    *ngIf="!hasOrganizationStatus() && !isRegistered"
+    (click)="handleParticipation()"
+    class="participate-btn btn btn-success"
+    [disabled]="isLoading">
+    Участвовать
+    </button>
+    <span *ngIf="!hasOrganizationStatus() && isRegistered" class="badge-registered">
+        Вы записаны
+    </span>
+
+    <!-- Кнопка для организатора -->
     <button 
-        *ngIf="!isRegistered"
-        (click)="handleParticipation()"
-        class="participate-btn"
-        [disabled]="isLoading"
-        class="btn" >
-        Участвовать
+        *ngIf="hasOrganizationStatus()"
+        (click)="handleEventDelete()"
+        class="participate-btn btn btn-danger"
+        [disabled]="isLoading">
+        Удалить
     </button>
     
     <span *ngIf="isRegistered" class="badge-registered">

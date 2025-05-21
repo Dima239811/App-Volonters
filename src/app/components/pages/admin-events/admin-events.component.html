@@ -1,3 +1,5 @@
+<app-navbar></app-navbar>
+
 <div class="admin-events">
   <h2>Создать новое событие</h2>
   <form [formGroup]="eventForm" (ngSubmit)="submitEvent()">
@@ -74,7 +76,7 @@
     
     <div class="card-grid">
       <!-- Если есть события -->
-      <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
+      <app-event-card *ngFor="let event of events" [event]="event" (eventDeleted)="onEventDeleted()"></app-event-card>
       
       <!-- Если нет событий -->
       <div *ngIf="!loading && !error && events.length === 0" class="no-events">

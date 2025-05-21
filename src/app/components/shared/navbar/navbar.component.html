@@ -5,20 +5,30 @@
             Добро<span>Дело</span>
         </a>
         <ul class="nav-links">
-            <li><a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Главная</a>
-            </li>
-            <li><a [routerLink]="['/']" fragment="events">Мероприятия</a></li>
-            <li><a [routerLink]="['/']" fragment="how-it-works">Как это работает</a></li>
+            <ng-container *ngIf="!hasOrganizationRole()">
+                <li><a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Главная</a></li>
+                <li><a [routerLink]="['/']" fragment="events">Мероприятия</a></li>
+                <li><a [routerLink]="['/']" fragment="how-it-works">Как это работает</a></li>
+            </ng-container>
+            
 
-            <ng-container *ngIf="auth()===false">
+            <ng-container *ngIf="!auth()">
                 <li><a [routerLink]="['/login']" id="login-btn">Войти</a></li>
                 <li><a [routerLink]="['/register']" class="btn btn-primary" id="register-btn">Регистрация</a></li>
             </ng-container>
 
-            <ng-container *ngIf="auth()===true">
-                <li><a  id="notifications-btn"><i class="fas fa-bell"></i></a></li>
-                <li><a [routerLink]="['/profile']" routerLinkActive="active">Профиль</a></li>
-                <li><a (click)="out()" [routerLink]="['/']" >Выйти</a></li>
+            <ng-container *ngIf="auth()">
+                <!-- Если это админ -->
+                <ng-container *ngIf="hasOrganizationRole(); else userMenu">
+                    <li><a [routerLink]="['/admin']" routerLinkActive="active">Админ-панель</a></li>
+                    <li><a [routerLink]="['/profile']" routerLinkActive="active">Профиль</a></li>
+                    <li><a (click)="out()" [routerLink]="['/']">Выйти</a></li>
+                </ng-container>
+                <!-- Если это обычный пользователь -->
+                <ng-template #userMenu>
+                    <li><a [routerLink]="['/profile']" routerLinkActive="active">Профиль</a></li>
+                    <li><a (click)="out()" [routerLink]="['/']">Выйти</a></li>
+                </ng-template>
             </ng-container>
         </ul>
     </div>
