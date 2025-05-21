@@ -66,10 +66,19 @@
         <textarea id="aboutMe" formControlName="aboutMe" rows="3"></textarea>
       </div>
 
-      <div class="form-group">
-        <label for="interests">Интересы (через запятую)</label>
-        <input id="interests" type="text" formControlName="interests" placeholder="Например: путешествия, музыка, спорт" />
+     <div class="interests-container">
+        <div class="interest-item" 
+            [class.selected]="isInterestSelected(interest.id)"
+            *ngFor="let interest of availableInterests">
+          <input type="checkbox" 
+                [id]="'interest-' + interest.id" 
+                [checked]="isInterestSelected(interest.id)" 
+                (change)="toggleInterest(interest.id)">
+          <label [for]="'interest-' + interest.id">{{ interest.name }}</label>
+        </div>
       </div>
+
+
 
       <div class="form-actions">
         <button type="submit" class="save-button" [disabled]="form.invalid">

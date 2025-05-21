@@ -1,13 +1,15 @@
+// models/event.model.ts
 export interface Event {
   id?: number;
   title: string;
   description: string;
-  date: string; // Формат: YYYY-MM-DD
-  time: string; // Формат: HH:MM
+  date: string;
+  time: string;
   location: string;
   category: string;
-  imageUrl: string;
+  imageUrl?: string;
+  isUrgent?: boolean;
+  status?: string;
   participantIds: number[];
-  isUrgent: string;
-  status: string;
+  creatorId: number;
 }

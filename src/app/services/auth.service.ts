@@ -6,6 +6,7 @@ export class AuthService {
     private currentUserId!: number | null;
     private authStateChanged = new Subject<void>(); // Добавляем Subject
     private currentUser!: User  | null;
+  getCurrentUser: any;
 
     constructor() {
       const userData = sessionStorage.getItem('currentUser');
@@ -67,7 +68,7 @@ export class AuthService {
     getCurrentUserId(): number | null {
       return this.currentUserId;
     }
-    hasRole(role: 'volunteer' | 'organization' | 'both'): boolean {
-      return this.currentUser?.role === role || this.currentUser?.role === 'both';
+    hasRole(role: 'volunteer' | 'organization'): boolean {
+      return this.currentUser?.role === role;
   }
 }

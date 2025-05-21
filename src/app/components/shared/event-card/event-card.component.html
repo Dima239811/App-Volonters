@@ -30,16 +30,16 @@
 
     <!-- Кнопка для организатора -->
     <button 
-        *ngIf="hasOrganizationStatus()"
+        *ngIf="hasOrganizationStatus() && isOnProfilePage"
         (click)="handleEventDelete()"
         class="participate-btn btn btn-danger"
         [disabled]="isLoading">
         Удалить
     </button>
     
-    <span *ngIf="isRegistered" class="badge-registered">
+    <!-- <span *ngIf="isRegistered" class="badge-registered">
         Вы записаны
-    </span>
+    </span> -->
 </div>
 
 </div>

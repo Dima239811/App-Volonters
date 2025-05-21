@@ -15,10 +15,11 @@ import { Router } from '@angular/router';
   standalone: true,
   imports:[NgClass, NgIf, ConfirmationModalComponent]
 })
-export class EventCardComponent {
+export class EventCardComponent implements OnInit {
   private eventService = inject(EventService);
   private authService = inject(AuthService);
    private authSub!: Subscription;
+  private router = inject(Router); // Inject Router
 
   @Input() event!: Event;
   @Input() showStatus: boolean = false;
@@ -29,10 +30,12 @@ export class EventCardComponent {
   isLoading = false;
   registrationError: string | null = null;
   isRegistered = false;
+  isOnProfilePage: boolean = false; // Flag to track if we're on the profile page
 
    ngOnInit(): void {
     this.currentUserId = this.authService.getCurrentUserId();
-    
+    this.isOnProfilePage = this.router.url === '/profile'; // Set the flag based on the current route
+
     // Подписываемся на изменения авторизации
     this.authSub = this.authService.onAuthStateChanged().subscribe(() => {
       this.currentUserId = this.authService.getCurrentUserId();
@@ -52,12 +55,6 @@ export class EventCardComponent {
     if (this.authSub) {
       this.authSub.unsubscribe();
     }
-  }
-
-  constructor(
-    private router: Router // Добавляем Router
-  ) {
-    this.currentUserId = this.authService.getCurrentUserId();
   }
 
 

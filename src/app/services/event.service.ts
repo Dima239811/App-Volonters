@@ -1,8 +1,9 @@
 // services/event.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap, map, of, catchError } from 'rxjs';
+import { Observable, switchMap, map, of, catchError, throwError } from 'rxjs';
 import { Event } from '../models/event.model';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +29,43 @@ export class EventService {
   }
 
   // Создать новое событие
-  createEvent(event: Event): Observable<Event> {
-    return this.http.post<Event>(`${this.apiUrl}/events`, event);
+  createEvent(event: Event, creatorId: number): Observable<Event> {
+  // Добавляем creatorId к событию
+  const eventWithCreator = { ...event, creatorId };
+
+  return this.http.post<Event>(`${this.apiUrl}/events`, eventWithCreator).pipe(
+    // После создания события обновляем организатора
+    switchMap(createdEvent => {
+      return this.http.get<User>(`${this.apiUrl}/users/${creatorId}`).pipe(
+        switchMap(organizer => {
+          // Добавляем ID события в массив организатора
+          const updatedEventIds = [...(organizer.eventIds || []), createdEvent.id];
+          
+          return this.http.patch<User>(
+            `${this.apiUrl}/users/${creatorId}`,
+            { eventIds: updatedEventIds }
+          ).pipe(
+            map(() => createdEvent) // Возвращаем созданное событие
+          );
+        })
+      );
+    }),
+    catchError(error => {
+      console.error('Ошибка при создании события:', error);
+      return throwError(() => new Error('Не удалось создать событие'));
+    })
+  );
+}
+
+    // Получить события по ID организатора
+    getEventsByOrganizer(organizerId: number): Observable<Event[]> {
+        return this.http.get<Event[]>(`${this.apiUrl}/events?creatorId=${organizerId}`);
+    }
+
+  // Временный метод (лучше вынести в AuthService или UserService)
+  private getCurrentUserId(): number | null {
+    const userData = sessionStorage.getItem('currentUser');
+    return userData ? JSON.parse(userData).id : null;
   }
 
   // Обновить событие
@@ -51,9 +87,9 @@ export class EventService {
   }
 
   // Удалить событие
-  /* deleteEvent(id: number): Observable<void> {
+  deleteEvent(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/events/${id}`);
-  } */
+  }
 
   // Записать пользователя на событие
   addParticipant(eventId: number, userId: number): Observable<Event> {
