@@ -1,91 +1,93 @@
 <div class="auth-container">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Регистрация</h2>
-        <button class="close-modal" (click)="goBack()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form (ngSubmit)="onSubmit()">
-          <div class="section-title">Личные данные</div>
-          
-          <div class="form-group">
-            <label for="register-name">Имя и фамилия</label>
-            <input type="text" id="register-name" placeholder="Введите ваше имя и фамилию" [(ngModel)]="userData.fullName" name="fullName" required>
-            <div class="error-message" *ngIf="errors.fullName">{{ errors.fullName }}</div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Регистрация</h2>
+      <button class="close-modal" (click)="goBack()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="onSubmit()">
+        <div class="section-title">Личные данные</div>
+
+        <div class="form-group">
+          <label for="register-name">Имя и фамилия</label>
+          <input type="text" id="register-name" placeholder="Введите ваше имя и фамилию" [(ngModel)]="userData.fullName"
+            name="fullName" required>
+          <div class="error-message" *ngIf="errors.fullName">{{ errors.fullName }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" placeholder="Введите ваш email" [(ngModel)]="userData.email"
+            name="email" required>
+          <div class="error-message" *ngIf="errors.email">{{ errors.email }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-phone">Телефон</label>
+          <input type="tel" id="register-phone" placeholder="Введите ваш телефон (999 999 9999)" [(ngModel)]="userData.phone"
+            name="phone" (blur)="validatePhone()">
+          <div class="error-message" *ngIf="errors.phone">{{errors.phone}}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-city">Город</label>
+          <input type="text" id="register-city" placeholder="Введите ваш город" [(ngModel)]="userData.city" name="city">
+        </div>
+
+        <div class="section-title">Настройки аккаунта</div>
+
+        <div class="form-group">
+          <label for="register-password">Пароль</label>
+          <input type="password" id="register-password" placeholder="Создайте пароль (минимум 8 символов)"
+            [(ngModel)]="userData.password" name="password" required>
+          <div class="error-message" *ngIf="errors.password">{{ errors.password }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-password-confirm">Подтверждение пароля</label>
+          <input type="password" id="register-password-confirm" placeholder="Подтвердите пароль"
+            [(ngModel)]="passwordConfirm" name="passwordConfirm" required>
+          <div class="error-message" *ngIf="errors.passwordConfirm">{{ errors.passwordConfirm }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-role">Я хочу быть</label>
+          <select id="register-role" [(ngModel)]="userData.role" name="role" required>
+            <option value="volunteer">Волонтером</option>
+            <option value="organization">Организатором</option>
+          </select>
+        </div>
+
+        <div class="section-title">Выберите ваши интересы</div>
+        <p style="margin-bottom: 15px; color: var(--gray-color);">Укажите темы волонтерства, которые вам интересны:</p>
+
+        <div class="interests-container">
+          <div class="interest-item" *ngFor="let interest of availableInterests">
+            <input type="checkbox" [id]="'interest-' + interest.id" [checked]="isInterestSelected(interest.id)"
+              (change)="toggleInterest(interest.id)">
+            <label [for]="'interest-' + interest.id">{{ interest.name }}</label>
           </div>
-          
-          <div class="form-group">
-            <label for="register-email">Email</label>
-            <input type="email" id="register-email" placeholder="Введите ваш email" [(ngModel)]="userData.email" name="email" required>
-            <div class="error-message" *ngIf="errors.email">{{ errors.email }}</div>
-          </div>
-          
-          <div class="form-group">
-            <label for="register-phone">Телефон</label>
-            <input type="tel" id="register-phone" placeholder="Введите ваш телефон" [(ngModel)]="userData.phone" name="phone">
-          </div>
-          
-          <div class="form-group">
-            <label for="register-city">Город</label>
-            <input type="text" id="register-city" placeholder="Введите ваш город" [(ngModel)]="userData.city" name="city">
-          </div>
-          
-          <div class="section-title">Настройки аккаунта</div>
-          
-          <div class="form-group">
-            <label for="register-password">Пароль</label>
-            <input type="password" id="register-password" placeholder="Создайте пароль (минимум 8 символов)" [(ngModel)]="userData.password" name="password" required>
-            <div class="error-message" *ngIf="errors.password">{{ errors.password }}</div>
-          </div>
-          
-          <div class="form-group">
-            <label for="register-password-confirm">Подтверждение пароля</label>
-            <input type="password" 
-                   id="register-password-confirm" 
-                   placeholder="Подтвердите пароль" 
-                   [(ngModel)]="passwordConfirm" 
-                   name="passwordConfirm" 
-                   required>
-            <div class="error-message" *ngIf="errors.passwordConfirm">{{ errors.passwordConfirm }}</div>
-          </div>
-          
-          <div class="form-group">
-            <label for="register-role">Я хочу быть</label>
-            <select id="register-role" [(ngModel)]="userData.role" name="role" required>
-              <option value="volunteer">Волонтером</option>
-              <option value="organizer">Организатором</option>
-              <option value="both">И тем, и другим</option>
-            </select>
-          </div>
-          
-          <div class="section-title">Выберите ваши интересы</div>
-          <p style="margin-bottom: 15px; color: var(--gray-color);">Укажите темы волонтерства, которые вам интересны:</p>
-          
-          <div class="interests-container">
-            <div class="interest-item" *ngFor="let interest of availableInterests">
-              <input type="checkbox" [id]="'interest-' + interest.id" [checked]="isInterestSelected(interest.id)" (change)="toggleInterest(interest.id)">
-              <label [for]="'interest-' + interest.id">{{ interest.name }}</label>
-            </div>
-          </div>
-          
-          <div class="section-title">Завершение регистрации</div>
-          
-          <div class="form-check">
-            <input type="checkbox" id="agree-terms" [(ngModel)]="userData.agreeTerms" name="agreeTerms" required>
-            <label for="agree-terms">Я согласен с <a href="#">условиями использования</a> и <a href="#">политикой конфиденциальности</a></label>
-          </div>
-          
-          <div class="form-check">
+        </div>
+
+        <div class="section-title">Завершение регистрации</div>
+
+        <div class="form-check">
+          <input type="checkbox" id="agree-terms" [(ngModel)]="userData.agreeTerms" name="agreeTerms" required>
+          <label for="agree-terms">Я согласен с <a href="#">условиями использования</a> и <a href="#">политикой
+              конфиденциальности</a></label>
+        </div>
+
+        <!-- <div class="form-check">
             <input type="checkbox" id="agree-newsletter" [(ngModel)]="userData.agreeNewsletter" name="agreeNewsletter">
             <label for="agree-newsletter">Я хочу получать новости и уведомления о новых мероприятиях</label>
-          </div>
-          
-          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Зарегистрироваться</button>
-        </form>
-        
-        <div class="form-footer">
-          <p>Уже есть аккаунт? <a [routerLink]="['/login']">Войдите</a></p>
-        </div>
+          </div> -->
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Зарегистрироваться</button>
+      </form>
+
+      <div class="form-footer">
+        <p>Уже есть аккаунт? <a [routerLink]="['/login']">Войдите</a></p>
       </div>
     </div>
   </div>
+</div>

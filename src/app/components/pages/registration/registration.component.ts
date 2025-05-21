@@ -28,7 +28,7 @@ export class RegistrationComponent {
     agreeTerms: false,
     agreeNewsletter: false
   };
-  
+
   availableInterests = [
     { id: 'ecology', name: 'Экология' },
     { id: 'animals', name: 'Защита животных' },
@@ -41,33 +41,34 @@ export class RegistrationComponent {
     { id: 'media', name: 'Медиа и IT' },
     { id: 'emergency', name: 'Помощь в ЧС' }
   ];
-  
+
   errors = {
     fullName: '',
     email: '',
     password: '',
-    passwordConfirm: ''
+    passwordConfirm: '',
+    phone: ''
   };
-  
+
   passwordConfirm = '';
   isLoading = false;
-  
+
   constructor(
     private router: Router,
     private userService: UserService,
     private authService: AuthService
-  ) {}
-  
+  ) { }
+
   validateForm(): boolean {
     let isValid = true;
-    
+
     if (!this.userData.fullName.trim()) {
       this.errors.fullName = 'Пожалуйста, введите имя и фамилию';
       isValid = false;
     } else {
       this.errors.fullName = '';
     }
-    
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(this.userData.email)) {
       this.errors.email = 'Пожалуйста, введите корректный email';
@@ -75,29 +76,33 @@ export class RegistrationComponent {
     } else {
       this.errors.email = '';
     }
-    
+
     if (this.userData.password.length < 8) {
       this.errors.password = 'Пароль должен содержать не менее 8 символов';
       isValid = false;
     } else {
       this.errors.password = '';
     }
-    
+
     if (this.userData.password !== this.passwordConfirm) {
       this.errors.passwordConfirm = 'Пароли не совпадают';
       isValid = false;
     } else {
       this.errors.passwordConfirm = '';
     }
-    
+
     if (!this.userData.agreeTerms) {
       alert('Необходимо согласиться с условиями использования');
       isValid = false;
     }
-    
+
+    if (!this.validatePhone()) {
+      isValid = false;
+    }
+
     return isValid;
   }
-  
+
   toggleInterest(interestId: string): void {
     const index = this.userData.interests?.indexOf(interestId) ?? -1;
     if (index === -1) {
@@ -106,16 +111,16 @@ export class RegistrationComponent {
       this.userData.interests?.splice(index, 1);
     }
   }
-  
+
   isInterestSelected(interestId: string): boolean {
     return this.userData.interests?.includes(interestId) ?? false;
   }
-  
+
   onSubmit(): void {
     if (!this.validateForm()) return;
-    
+
     this.isLoading = true;
-    
+
     // Проверяем, существует ли пользователь с таким email
     this.userService.getUserByEmail(this.userData.email).subscribe({
       next: (users) => {
@@ -123,7 +128,7 @@ export class RegistrationComponent {
           this.errors.email = 'Пользователь с таким email уже зарегистрирован';
           this.isLoading = false;
         } else {
-           // ✅ Хэшируем пароль перед отправкой на сервер
+          // ✅ Хэшируем пароль перед отправкой на сервер
           const hashedPassword = bcrypt.hashSync(this.userData.password, 10);
           this.userData.password = hashedPassword;
           // Создаем нового пользователя
@@ -131,7 +136,7 @@ export class RegistrationComponent {
             next: (newUser) => {
               this.isLoading = false;
               alert('Регистрация успешна! Добро пожаловать в ДоброДело!');
-              
+
               this.router.navigate(['/login']);
             },
             error: (err) => {
@@ -149,7 +154,39 @@ export class RegistrationComponent {
       }
     });
   }
-  
+
+  validatePhone(): boolean {
+    if (!this.userData.phone) {
+      this.errors.phone = 'Пожалуйста, введите номер телефона';
+      return false;
+    }
+
+    // Удаляем все нецифровые символы
+    const cleanedPhone = this.userData.phone.replace(/\D/g, '');
+
+    // Проверяем российский формат телефона (10 или 11 цифр)
+    if (!/^(\d{10,11})$/.test(cleanedPhone)) {
+      this.errors.phone = 'Введите корректный номер телефона (10 или 11 цифр)';
+      return false;
+    }
+
+    // Форматируем номер для сохранения
+    this.userData.phone = this.formatPhoneNumber(cleanedPhone);
+    this.errors.phone = '';
+    return true;
+  }
+
+  // Метод для форматирования номера
+  private formatPhoneNumber(phone: string): string {
+    if (phone.length === 10) {
+      return `+7${phone}`;
+    } else if (phone.length === 11 && phone.startsWith('8')) {
+      return `+7${phone.substring(1)}`;
+    } else if (phone.length === 11 && phone.startsWith('7')) {
+      return `+${phone}`;
+    }
+    return phone;
+  }
   goBack(): void {
     this.router.navigate(['/']);
   }

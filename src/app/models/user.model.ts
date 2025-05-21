@@ -9,7 +9,7 @@ export interface User {
   profileImage?: string;
   password: string; 
   eventIds: number[]; 
-  role: 'volunteer' | 'organization' | 'both'; 
+  role: 'volunteer' | 'organization'; 
   agreeTerms: boolean;
   agreeNewsletter?: boolean;
   

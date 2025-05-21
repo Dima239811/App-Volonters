@@ -24,6 +24,64 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+.interests-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Расстояние между элементами */
+  margin-top: 15px;
+}
+
+.interest-item {
+  position: relative; /* Для позиционирования чекбокса */
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa; /* Светлый фон по умолчанию */
+  color: #495057; /* Цвет текста */
+  border-radius: 20px; /* Скругленные углы */
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  border: 1px solid #dee2e6; /* Граница */
+  transition: all 0.2s ease; /* Плавные переходы */
+  user-select: none; /* Запрет выделения текста */
+}
+
+.interest-item:hover {
+  background-color: #e9ecef; /* Цвет при наведении */
+  border-color: #ced4da;
+}
+
+/* Стили для выбранного элемента */
+.interest-item.selected {
+  background-color: #28a745; /* Зеленый фон */
+  color: white; /* Белый текст */
+  border-color: #28a745;
+}
+
+/* Скрываем нативный чекбокс */
+.interest-item input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+/* Стили для label */
+.interest-item label {
+  cursor: pointer;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Иконка галочки для выбранных элементов */
+.interest-item.selected label::before {
+  content: "✓";
+  font-size: 12px;
+}
+
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }

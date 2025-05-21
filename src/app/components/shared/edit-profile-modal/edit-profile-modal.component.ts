@@ -33,15 +33,29 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
   isDragging = false;
   private uploadService: UploadService = inject(UploadService);
   oldProfileImage: string | null = null;
+  selectedInterests: string[] = [];
 
-  constructor(private fb: FormBuilder, private profileSevice: ProfileService) {
+  availableInterests = [
+    { id: 'ecology', name: 'Экология' },
+    { id: 'animals', name: 'Защита животных' },
+    { id: 'education', name: 'Образование' },
+    { id: 'social', name: 'Социальная помощь' },
+    { id: 'health', name: 'Здравоохранение' },
+    { id: 'culture', name: 'Культура и искусство' },
+    { id: 'sport', name: 'Спорт' },
+    { id: 'events', name: 'Организация мероприятий' },
+    { id: 'media', name: 'Медиа и IT' },
+    { id: 'emergency', name: 'Помощь в ЧС' }
+  ];
+
+  constructor(private fb: FormBuilder, private profileService: ProfileService) {
     this.form = this.fb.group({
       fullName: [''],
       email: [''],
       phone: [''],
       city: [''],
       aboutMe: [''],
-      interests: [''],
+      interests: [[]],
       profileImage: ['']
     });
   }
@@ -65,14 +79,16 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
       phone: this.user.phone || '',
       city: this.user.city || '',
       aboutMe: this.user.aboutMe || '',
-      interests: this.user.interests?.join(', ') || '',
+      interests: this.user.interests || [],
       profileImage: this.user.profileImage || ''
     });
 
+    this.selectedInterests = [...(this.user.interests || [])];
+
     if (this.user.profileImage) {
-      // если profileImage хранится как '/uploads/файл.jpg'
-      this.previewImage = 'http://localhost:4000' + this.user.profileImage;
-      // если хранится как полный url, просто: this.previewImage = this.user.profileImage;
+      this.previewImage = this.user.profileImage.startsWith('http') 
+        ? this.user.profileImage 
+        : 'http://localhost:4000' + this.user.profileImage;
     } else {
       this.previewImage = null;
     }
@@ -97,50 +113,61 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
     }
   }
 
-  onFileSelected(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (file) {
-    // Сохраняем старое фото для удаления при onSave
-    this.oldProfileImage = this.form.value.profileImage || null;
-    this.uploadService.uploadProfileImage(file).subscribe({
-      next: (response) => {
-        this.form.patchValue({ profileImage: response.url });
-        this.previewImage = 'http://localhost:4000' + response.url;
-      },
-      error: (err) => {
-        console.error('Ошибка загрузки:', err);
-      }
-    });
+  isInterestSelected(interestId: string): boolean {
+    return this.selectedInterests.includes(interestId);
   }
-}
+
+  toggleInterest(interestId: string): void {
+    const index = this.selectedInterests.indexOf(interestId);
+    if (index === -1) {
+      this.selectedInterests.push(interestId);
+    } else {
+      this.selectedInterests.splice(index, 1);
+    }
+    this.form.patchValue({ interests: this.selectedInterests });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.oldProfileImage = this.form.value.profileImage || null;
+      this.uploadService.uploadProfileImage(file).subscribe({
+        next: (response) => {
+          this.form.patchValue({ profileImage: response.url });
+          this.previewImage = 'http://localhost:4000' + response.url;
+        },
+        error: (err) => {
+          console.error('Ошибка загрузки:', err);
+        }
+      });
+    }
+  }
 
   onSave(): void {
-  const formValue = this.form.value;
-  const updatedUser: Partial<User> = {
-    ...formValue,
-    interests: formValue.interests?.split(',').map((i: string) => i.trim()) || []
-  };
+    const formValue = this.form.value;
+    const updatedUser: Partial<User> = {
+      ...formValue,
+      interests: this.selectedInterests
+    };
 
-  // Тут можно добавить удаление старого фото, если оно было (опционально)
-  if (this.user.id && this.oldProfileImage) {
-    this.profileSevice.updateUserWithProfileImageDelete(
-      this.user.id,
-      updatedUser,
-      this.oldProfileImage
-    ).subscribe({
-      next: (user) => {
-        this.save.emit(updatedUser);
-      },
-      error: (err) => {
-        console.error('Ошибка при обновлении профиля:', err);
-      }
-    });
-    this.oldProfileImage = null;
-  } else {
-    this.save.emit(updatedUser);
+    if (this.user.id && this.oldProfileImage) {
+      this.profileService.updateUserWithProfileImageDelete(
+        this.user.id,
+        updatedUser,
+        this.oldProfileImage
+      ).subscribe({
+        next: (user) => {
+          this.save.emit(updatedUser);
+        },
+        error: (err) => {
+          console.error('Ошибка при обновлении профиля:', err);
+        }
+      });
+    } else {
+      this.save.emit(updatedUser);
+    }
   }
-}
 
   clearImage(): void {
     const oldImage = this.form.value.profileImage || '';
@@ -155,5 +182,9 @@ export class EditProfileModalComponent implements OnInit, OnChanges {
         }
       });
     } 
+  }
+
+  onCancel(): void {
+    this.cancel.emit();
   }
 }

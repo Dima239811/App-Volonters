@@ -54,6 +54,17 @@
       <app-event-card *ngFor="let event of userEvents" [event]="event" [showStatus]="true"></app-event-card>
     </div>
   </div>
+
+
+  <div class="content-box" *ngIf="isAdmin()">
+    <div class="section-title">
+      Проводимые мероприятия
+      <a [routerLink]="['/']" fragment="events" class="btn btn-outline">просмотреть другие мероприятия</a>
+    </div>
+    <div class="event-list">
+      <app-event-card *ngFor="let event of userEvents" [event]="event" [showStatus]="true"></app-event-card>
+    </div>
+  </div>
 </div>
 
 <app-footer></app-footer>

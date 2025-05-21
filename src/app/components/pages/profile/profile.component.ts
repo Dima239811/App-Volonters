@@ -11,7 +11,8 @@ import { UserService } from '../../../services/user.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EditProfileModalComponent } from '../../shared/edit-profile-modal/edit-profile-modal.component';
 import { AuthService } from '../../../services/auth.service';
-import { UploadService } from '../../../services/upload.service';
+import { EventService } from '../../../services/event.service'; // Добавляем сервис событий
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -39,12 +40,21 @@ export class ProfileComponent implements OnInit {
   userEvents: Event[] = [];
   loading = true;
   error: string | null = null;
+  isEditingEvent = false; // Для модалки редактирования события
+  currentEditingEvent: Event | null = null; // Текущее редактируемое событие
 
-  constructor(private profileService: ProfileService, private userService: UserService
-    ,private authService: AuthService
+  constructor(
+    private profileService: ProfileService,
+    private userService: UserService,
+    private authService: AuthService,
+    private eventService: EventService // Добавляем сервис событий
   ) {}
 
   ngOnInit(): void {
+    this.loadCurrentUser();
+  }
+
+  loadCurrentUser(): void {
     const currentUser = this.profileService.getCurrentUser();
     
     if (!currentUser?.id) {
@@ -64,7 +74,6 @@ export class ProfileComponent implements OnInit {
         this.user = user;
         this.profileService.setCurrentUser(user);
         this.loading = false;
-        console.log(this.user.profileImage)
       },
       error: (err) => {
         this.error = 'Не удалось загрузить данные пользователя';
@@ -75,24 +84,81 @@ export class ProfileComponent implements OnInit {
   }
 
   loadUserEvents(userId: number): void {
-  if (!userId) {
-    console.error('Некорректный ID пользователя');
-    return;
+    if (!userId) {
+      console.error('Некорректный ID пользователя');
+      return;
+    }
+
+    if (this.isAdmin()) {
+      // Для организатора загружаем события, которые он создал
+      this.eventService.getEventsByOrganizer(userId).subscribe({
+        next: (events) => {
+          this.userEvents = events;
+          console.log('События организатора:', this.userEvents);
+        },
+        error: (err) => {
+          console.error('Ошибка загрузки событий организатора:', err);
+          this.error = 'Ошибка загрузки мероприятий';
+        }
+      });
+    } else {
+      // Для волонтера загружаем события, на которые он записан
+      this.profileService.getUserEvents(userId).subscribe({
+        next: (events) => {
+          this.userEvents = events;
+          console.log('События волонтера:', this.userEvents);
+        },
+        error: (err) => {
+          console.error('Не удалось загрузить мероприятия пользователя:', err);
+          this.error = 'Ошибка загрузки мероприятий';
+        }
+      });
+    }
   }
 
-  this.profileService.getUserEvents(userId).subscribe({
-    next: (events) => {
-      this.userEvents = events; // Убираем дополнительную фильтрацию
-      console.log('События пользователя:', this.userEvents);
-    },
-    error: (err) => {
-      console.error('Не удалось загрузить мероприятия пользователя:', err);
-      this.error = 'Ошибка загрузки мероприятий';
-    }
-  });
-}
+  // Редактирование события
+  openEventEditModal(event: Event): void {
+    this.currentEditingEvent = { ...event };
+    this.isEditingEvent = true;
+  }
 
-  isEditing = false; // для открытия модалки
+  closeEventEditModal(): void {
+    this.isEditingEvent = false;
+    this.currentEditingEvent = null;
+  }
+
+  saveEvent(updatedEvent: Event): void {
+    if (!this.currentEditingEvent?.id) return;
+
+    this.eventService.updateEvent(this.currentEditingEvent.id, updatedEvent).subscribe({
+      next: () => {
+        this.loadUserEvents(this.user.id!);
+        this.closeEventEditModal();
+      },
+      error: (err) => {
+        console.error('Ошибка при обновлении события:', err);
+        alert('Не удалось обновить событие');
+      }
+    });
+  }
+
+  // Удаление события
+  deleteEvent(eventId: number): void {
+    if (confirm('Вы уверены, что хотите удалить это событие?')) {
+      this.eventService.deleteEvent(eventId).subscribe({
+        next: () => {
+          this.userEvents = this.userEvents.filter(e => e.id !== eventId);
+        },
+        error: (err) => {
+          console.error('Ошибка при удалении события:', err);
+          alert('Не удалось удалить событие');
+        }
+      });
+    }
+  }
+
+  // Профиль
+  isEditing = false;
   openEditModal(): void {
     this.isEditing = true;
   }
@@ -102,36 +168,32 @@ export class ProfileComponent implements OnInit {
   }
 
   getProfileImageUrl(imgPath: string | undefined): string {
-  if (!imgPath) return '';
-  return imgPath.startsWith('http') ? imgPath : 'http://localhost:4000' + imgPath;
-}
+    if (!imgPath) return '';
+    return imgPath.startsWith('http') ? imgPath : 'http://localhost:4000' + imgPath;
+  }
 
   saveProfile(updatedFields: Partial<User>): void {
-  if (!this.user?.id) return;
+    if (!this.user?.id) return;
 
-  // --- Оптимистичное обновление (фото исчезает сразу) ---
-  const prevUser = { ...this.user }; // Сохраняем предыдущее состояние для отката
-  this.user = { ...this.user, ...updatedFields };
+    const prevUser = { ...this.user };
+    this.user = { ...this.user, ...updatedFields };
 
-
-  this.userService.updateUser(this.user.id!, updatedFields).subscribe({
-    next: (updatedUser) => {
-      if (this.user.id) {
-        this.loadUserData(this.user.id); // Теперь ошибка исчезнет!
+    this.userService.updateUser(this.user.id!, updatedFields).subscribe({
+      next: (updatedUser) => {
+        if (this.user.id) {
+          this.loadUserData(this.user.id);
+        }
+        this.closeEditModal();
+      },
+      error: (err) => {
+        this.user = prevUser;
+        console.error('Ошибка при обновлении профиля:', err);
+        alert('Не удалось обновить профиль');
       }
-      this.closeEditModal();
-    },
-    error: (err) => {
-      // Откат при ошибке
-      this.user = prevUser;
-      console.error('Ошибка при обновлении профиля:', err);
-      alert('Не удалось обновить профиль');
-    }
-  });
-}
+    });
+  }
 
   isAdmin() {
     return this.authService.hasRole('organization');
   }
-
 }

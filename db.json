@@ -10,7 +10,9 @@
       "eventIds": [],
       "aboutMe": "",
       "interests": [
-        "animals"
+        "animals",
+        "ПИСЬКА ВАНЬКА",
+        "ПОПКИ"
       ],
       "role": "organization",
       "agreeTerms": true,
@@ -33,7 +35,99 @@
       "agreeTerms": true,
       "agreeNewsletter": true,
       "profileImage": "/uploads/profile/1747747667554-114914567.jpg"
+    },
+    {
+      "id": "c492",
+      "fullName": "hui",
+      "email": "hui@mail.hul",
+      "phone": "+78998765123",
+      "city": "Нижний Новгород",
+      "password": "$2b$10$0OeRwZsludrSq50IyolB2uIrOkKoYJLB0R4YTMtmzeXqjeLSfT1ki",
+      "eventIds": [
+        "45c0"
+      ],
+      "aboutMe": "",
+      "interests": [
+        "animals",
+        "events",
+        "culture"
+      ],
+      "role": "organization",
+      "agreeTerms": true,
+      "agreeNewsletter": false,
+      "profileImage": ""
+    },
+    {
+      "id": "9711",
+      "fullName": "Некит Is Бро",
+      "email": "isbronekit@gmail.com",
+      "phone": "89524624565",
+      "city": "Нижний Новгород",
+      "password": "$2b$10$wl.zYKNnuKogXFxErzPeROAE5ZogUrBoAnGx46/4GcmbpRGW8pYK6",
+      "eventIds": [],
+      "aboutMe": "",
+      "interests": [
+        "health",
+        "sport",
+        "culture",
+        "social",
+        "media"
+      ],
+      "role": "volunteer",
+      "agreeTerms": true,
+      "agreeNewsletter": false,
+      "profileImage": ""
+    },
+    {
+      "id": "6408",
+      "fullName": "fswfef",
+      "email": "sfsefffsf@v.r",
+      "phone": "78456378786",
+      "city": "dfagbdfvdfg",
+      "password": "$2b$10$Ood56g8nqYpjPnumlAkHZeW9Pf2Pf/3YF5aHbcgXnet8pLRDRKPQa",
+      "eventIds": [
+        "fad1"
+      ],
+      "aboutMe": "",
+      "interests": [
+        "emergency",
+        "media"
+      ],
+      "role": "organization",
+      "agreeTerms": true,
+      "agreeNewsletter": false
     }
   ],
-  "events": []
+  "events": [
+    {
+      "id": "fad1",
+      "title": "rwerwrwer",
+      "description": "erwrer",
+      "date": "2025-05-17",
+      "time": "12:17",
+      "location": "rwrwer",
+      "category": "fewfwf",
+      "imageUrl": "/uploads/events/1747818670062-895629443.jpg",
+      "isUrgent": "нет",
+      "status": "активно",
+      "participantIds": [
+        "9711"
+      ],
+      "creatorId": "6408"
+    },
+    {
+      "id": "45c0",
+      "title": "аыавыа",
+      "description": "аываыаыва",
+      "date": "2025-05-18",
+      "time": "12:31",
+      "location": "аывавыа",
+      "category": "аываыаав",
+      "imageUrl": "/uploads/events/1747819686432-540565515.png",
+      "isUrgent": "нет",
+      "status": "активно",
+      "participantIds": [],
+      "creatorId": "c492"
+    }
+  ]
 }
