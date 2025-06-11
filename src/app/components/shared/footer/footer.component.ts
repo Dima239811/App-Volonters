@@ -1,4 +1,6 @@
+
 import { Component } from '@angular/core';
+import { FormsModule, NgModel } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -6,15 +8,18 @@ import { RouterLink } from '@angular/router';
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css'],
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
 })
 export class FooterComponent {
   currentYear = new Date().getFullYear();
   email: string = '';
 
   onSubmit() {
+    if (this.email==""){
+      alert('Укажите почту')
+      return
+    }
     console.log('Подписка на новости:', this.email);
-    // Здесь будет логика отправки запроса на бэкенд
     this.email = '';
     alert('Спасибо за подписку!');
   }

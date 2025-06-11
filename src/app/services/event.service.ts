@@ -1,4 +1,3 @@
-// services/event.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap, map, of, catchError, throwError } from 'rxjs';
@@ -9,8 +8,8 @@ import { User } from '../models/user.model';
   providedIn: 'root'
 })
 export class EventService {
-  private apiUrl = 'http://localhost:3000'; // Базовый URL для json-server
-  private fileApiUrl = 'http://localhost:4000/api'; // Express
+  private apiUrl = 'http://localhost:3000'; 
+  private fileApiUrl = 'http://localhost:4000/api'; 
   constructor(private http: HttpClient) {}
 
   // Получить все события
@@ -30,22 +29,20 @@ export class EventService {
 
   // Создать новое событие
   createEvent(event: Event, creatorId: number): Observable<Event> {
-  // Добавляем creatorId к событию
+
   const eventWithCreator = { ...event, creatorId };
 
   return this.http.post<Event>(`${this.apiUrl}/events`, eventWithCreator).pipe(
-    // После создания события обновляем организатора
     switchMap(createdEvent => {
       return this.http.get<User>(`${this.apiUrl}/users/${creatorId}`).pipe(
         switchMap(organizer => {
-          // Добавляем ID события в массив организатора
           const updatedEventIds = [...(organizer.eventIds || []), createdEvent.id];
           
           return this.http.patch<User>(
             `${this.apiUrl}/users/${creatorId}`,
             { eventIds: updatedEventIds }
           ).pipe(
-            map(() => createdEvent) // Возвращаем созданное событие
+            map(() => createdEvent) 
           );
         })
       );
@@ -62,7 +59,7 @@ export class EventService {
         return this.http.get<Event[]>(`${this.apiUrl}/events?creatorId=${organizerId}`);
     }
 
-  // Временный метод (лучше вынести в AuthService или UserService)
+
   private getCurrentUserId(): number | null {
     const userData = sessionStorage.getItem('currentUser');
     return userData ? JSON.parse(userData).id : null;
@@ -73,7 +70,7 @@ export class EventService {
     return this.http.put<Event>(`${this.apiUrl}/events/${id}`, event);
   }
 
-  // Новый метод!
+
   deleteEventWithImage(event: Event): Observable<void> {
     if (!event.imageUrl) {
       // Если картинки нет — просто удаляем событие
@@ -101,12 +98,10 @@ export class EventService {
         throw new Error('USER_ALREADY_REGISTERED');
       }
       
-      // Создаем только обновление для participantIds
       const update = {
           participantIds: [...(event.participantIds || []), userId]
       };
       
-      // Используем patch вместо put для частичного обновления
       return this.http.patch<Event>(
           `${this.apiUrl}/events/${eventId}`,
           update
@@ -115,7 +110,7 @@ export class EventService {
   );
   }
 
-  // Новый метод для проверки записи
+  // метод для проверки записи
   isUserRegistered(eventId: number, userId: number): Observable<boolean> {
   return this.getEventById(eventId).pipe(
     map(event => {
@@ -142,4 +137,12 @@ export class EventService {
   getEventsByCategory(category: string): Observable<Event[]> {
     return this.http.get<Event[]>(`${this.apiUrl}/events?category=${category}`);
   }
+
+  getParticipantsDetails(participantIds: number[]): Observable<{id: number, name: string}[]> {
+  return this.http.post<{id: number, name: string}[]>(`${this.apiUrl}/users`, {ids: participantIds});
+}
+
+getUserById(id: number): Observable<User> {
+      return this.http.get<User>(`${this.apiUrl}/users/${id}`);
+    }
 }

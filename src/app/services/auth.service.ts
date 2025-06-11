@@ -4,7 +4,7 @@ import { User } from "../models/user.model";
 export class AuthService {
     private isAuthenticated;
     private currentUserId!: number | null;
-    private authStateChanged = new Subject<void>(); // Добавляем Subject
+    private authStateChanged = new Subject<void>(); 
     private currentUser!: User  | null;
   getCurrentUser: any;
 
@@ -23,19 +23,12 @@ export class AuthService {
       }
     }
   
-    // Добавляем метод для подписки на изменения
+
     onAuthStateChanged() {
       return this.authStateChanged.asObservable();
     }
-  
-    /* login(userId: number) {
-      this.isAuthenticated = true;
-      this.currentUserId = userId;
-      this.authStateChanged.next(); // Уведомляем об изменении
-      console.log("пользователь авторизовался")
-    } */
 
-    login(user: User) { // теперь login принимает пользователя целиком!
+    login(user: User) { 
       this.isAuthenticated = true;
       this.currentUserId = user.id || null;
       this.currentUser = user; // сохраняем пользователя
@@ -43,14 +36,6 @@ export class AuthService {
       this.authStateChanged.next();
       console.log("пользователь авторизовался");
     }
-  
-    /* logout() {
-      this.isAuthenticated = false;
-      this.currentUserId = null;
-      window.sessionStorage.clear();
-      this.authStateChanged.next(); // Уведомляем об изменении
-      console.log("пользователь вышел")
-    } */
   
     logout() {
       this.isAuthenticated = false;

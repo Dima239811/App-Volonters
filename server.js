@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // обязательно для DELETE с body!
+app.use(express.json()); 
 
 // Создание папок для профилей и событий
 const profileDir = path.join(__dirname, 'public/uploads/profile');

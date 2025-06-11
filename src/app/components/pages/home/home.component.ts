@@ -28,10 +28,14 @@ import { CommonModule, NgIf } from '@angular/common';
   ],
 })
 export class HomeComponent implements OnInit {
-  events: Event[] = [];
+  allEvents: Event[] = [];      // Все загруженные события
+  displayedEvents: Event[] = []; // События, которые показываем
   testimonials: Testimonial[] = [];
   loading = true;
   error: string | null = null;
+
+  private loadStep = 6;         // Сколько подгружаем за раз
+  private currentCount = 0;     // Сколько уже показано
 
   constructor(private eventService: EventService) {}
 
@@ -43,10 +47,13 @@ export class HomeComponent implements OnInit {
   loadFeaturedEvents() {
     this.loading = true;
     this.error = null;
-    
+
     this.eventService.getEvents().subscribe({
       next: (events) => {
-        this.events = events;
+        this.allEvents = events;
+        this.currentCount = 0;
+        this.displayedEvents = [];
+        this.loadMoreEvents();  // Загрузить первые 6
         this.loading = false;
       },
       error: (err) => {
@@ -55,11 +62,19 @@ export class HomeComponent implements OnInit {
         console.error('Ошибка при загрузке мероприятий:', err);
       }
     });
-    console.log(this.events)
+  }
+
+  loadMoreEvents() {
+    const nextCount = this.currentCount + this.loadStep;
+    this.displayedEvents = this.allEvents.slice(0, nextCount);
+    this.currentCount = this.displayedEvents.length;
+  }
+
+  canLoadMore(): boolean {
+    return this.currentCount < this.allEvents.length;
   }
 
   loadTestimonials() {
-    // В реальном приложении здесь был бы запрос к API
     this.testimonials = [
       {
         id: 1,

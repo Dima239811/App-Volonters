@@ -1,46 +1,46 @@
 import { Component, Input, inject, OnInit, Output, EventEmitter } from '@angular/core';
 import { Event } from '../../../models/event.model';
-import { NgClass, NgIf } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 import { EventService } from '../../../services/event.service';
 import { finalize, Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
-
+import { User } from '../../../models/user.model';
 @Component({
   selector: 'app-event-card',
   templateUrl: './event-card.component.html',
   styleUrls: ['./event-card.component.css'],
   standalone: true,
-  imports:[NgClass, NgIf, ConfirmationModalComponent]
+  imports: [NgIf, ConfirmationModalComponent, NgFor]
 })
 export class EventCardComponent implements OnInit {
   private eventService = inject(EventService);
   private authService = inject(AuthService);
-   private authSub!: Subscription;
-  private router = inject(Router); // Inject Router
+  private authSub!: Subscription;
+  private router = inject(Router);
 
   @Input() event!: Event;
   @Input() showStatus: boolean = false;
   @Input() currentUserId!: number | null;
-  @Output() eventDeleted = new EventEmitter<void>();
+  @Output() eventDeleted = new EventEmitter<number>();
 
   isModalOpen = false;
   isLoading = false;
   registrationError: string | null = null;
   isRegistered = false;
-  isOnProfilePage: boolean = false; // Flag to track if we're on the profile page
+  isOnProfilePage: boolean = false;
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.currentUserId = this.authService.getCurrentUserId();
-    this.isOnProfilePage = this.router.url === '/profile'; // Set the flag based on the current route
+    this.isOnProfilePage = this.router.url === '/profile';
 
     // Подписываемся на изменения авторизации
     this.authSub = this.authService.onAuthStateChanged().subscribe(() => {
       this.currentUserId = this.authService.getCurrentUserId();
       if (!this.currentUserId) {
-        this.isRegistered = false; // Сбрасываем статус при выходе
+        this.isRegistered = false;
       } else if (this.event?.id) {
         this.checkRegistrationStatus();
       }
@@ -72,7 +72,7 @@ export class EventCardComponent implements OnInit {
       });
       return;
     }
-    
+
     // Для авторизованных - открываем модальное окно
     this.openModal();
   }
@@ -82,43 +82,43 @@ export class EventCardComponent implements OnInit {
   }
 
   checkRegistrationStatus(): void {
-  if (this.event?.id && this.currentUserId) {
-    this.eventService.isUserRegistered(this.event.id, this.currentUserId)
-      .subscribe(registered => {
-        this.isRegistered = registered;
-      });
+    if (this.event?.id && this.currentUserId) {
+      this.eventService.isUserRegistered(this.event.id, this.currentUserId)
+        .subscribe(registered => {
+          this.isRegistered = registered;
+        });
+    }
   }
-}
 
   confirmParticipation(): void {
-  if (!this.event?.id) {
-    this.registrationError = 'Событие не определено';
-    return;
+    if (!this.event?.id) {
+      this.registrationError = 'Событие не определено';
+      return;
+    }
+
+    if (!this.currentUserId) {
+      this.registrationError = 'Необходимо авторизоваться';
+      return;
+    }
+
+    this.isLoading = true;
+    this.registrationError = null;
+
+
+    this.eventService.addParticipant(this.event.id, this.currentUserId)
+      .pipe(
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: () => {
+          this.isRegistered = true;
+          this.closeModal();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.registrationError = this.getErrorMessage(err);
+        }
+      });
   }
-
-  if (!this.currentUserId) {
-    this.registrationError = 'Необходимо авторизоваться';
-    return;
-  }
-
-  this.isLoading = true;
-  this.registrationError = null;
-
-  // Теперь currentUserId точно number
-  this.eventService.addParticipant(this.event.id, this.currentUserId)
-    .pipe(
-      finalize(() => this.isLoading = false)
-    )
-    .subscribe({
-      next: () => {
-        this.isRegistered = true;
-        this.closeModal();
-      },
-      error: (err: HttpErrorResponse) => {
-        this.registrationError = this.getErrorMessage(err);
-      }
-    });
-}
 
   private getErrorMessage(error: HttpErrorResponse): string {
     if (error.status === 404) {
@@ -135,12 +135,12 @@ export class EventCardComponent implements OnInit {
   }
 
   getEventImageUrl(imgPath: string | undefined): string {
-  if (!imgPath) return 'assets/no-event-img.png';
-  // Если путь уже абсолютный — не добавляем ещё раз
-  return imgPath.startsWith('http') ?
-    imgPath :
-    'http://localhost:4000' + imgPath;
-}
+    if (!imgPath) return 'assets/no-event-img.png';
+
+    return imgPath.startsWith('http') ?
+      imgPath :
+      'http://localhost:4000' + imgPath;
+  }
 
   handleEventDelete(): void {
     if (confirm(`Удалить событие "${this.event?.title}"?`)) {
@@ -150,7 +150,7 @@ export class EventCardComponent implements OnInit {
           .pipe(finalize(() => this.isLoading = false))
           .subscribe({
             next: () => {
-              this.eventDeleted.emit(); // Сообщаем родителю
+              this.eventDeleted.emit(this.event.id);
             },
             error: (err: any) => {
               alert('Ошибка удаления: ' + (err.error?.message || err.message));
@@ -159,5 +159,92 @@ export class EventCardComponent implements OnInit {
       }
     }
   }
+
+  eco(): boolean {
+    return this.event.category.includes('Экология');
+  }
+
+
+
+
+
+  isParticipantsModalOpen = false;
+  participants: { id?: number, name: string, tel?: string }[] = [];
+  sortDirection: 'asc' | 'desc' = 'asc';
+  isLoadingParticipants = false;
+
+  // ... другие методы ...
+
+  openParticipantsModal(): void {
+    this.isParticipantsModalOpen = true;
+    this.loadParticipants();
+  }
+
+  closeParticipantsModal(): void {
+    this.isParticipantsModalOpen = false;
+    this.participants = []
+  }
+
+  loadParticipants(): void {
+    if (!this.event?.participantIds || this.event.participantIds.length === 0) return;
+
+    this.isLoadingParticipants = true;
+    this.event.participantIds.forEach(element => {
+      this.eventService.getUserById(element)
+        .pipe(finalize(() => this.isLoadingParticipants = false))
+        .subscribe({
+          next: (participants) => {
+            this.participants.push({ id: participants.id, name: participants.fullName, tel: participants.phone })
+            console.log('Загруженные участники:', participants);
+            this.sortParticipants();
+          },
+          error: (err) => {
+            console.error('Ошибка загрузки участников:', err);
+          }
+        });
+    });
+
+  }
+
+  toggleSortDirection(): void {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    this.sortParticipants();
+  }
+
+  sortParticipants(): void {
+    this.participants.sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+      return this.sortDirection === 'asc'
+        ? nameA.localeCompare(nameB)
+        : nameB.localeCompare(nameA);
+    });
+  }
+
+  confirmUnregister(): void {
+    if (confirm('Вы уверены, что хотите отписаться от события?')) {
+      this.unregisterFromEvent();
+    }
+  }
+
+  unregisterFromEvent(): void {
+    if (!this.event?.id || !this.currentUserId) return;
+
+    this.isLoading = true;
+    this.eventService.removeParticipant(this.event.id, this.currentUserId)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: () => {
+          this.isRegistered = false;
+          alert('Вы успешно отписались от события');
+          this.eventDeleted.emit(this.event.id);
+        },
+        error: (err) => {
+          console.error('Ошибка отписки:', err);
+          alert('Не удалось отписаться от события');
+        }
+      });
+  }
+
 
 }

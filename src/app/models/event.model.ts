@@ -1,4 +1,3 @@
-// models/event.model.ts
 export interface Event {
   id?: number;
   title: string;
@@ -6,9 +5,9 @@ export interface Event {
   date: string;
   time: string;
   location: string;
-  category: string;
+  category: string[];
   imageUrl?: string;
-  isUrgent?: boolean;
+  isUrgent: boolean;
   status?: string;
   participantIds: number[];
   creatorId: number;

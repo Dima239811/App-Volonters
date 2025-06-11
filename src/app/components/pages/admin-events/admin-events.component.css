@@ -41,11 +41,50 @@
   box-shadow: 0 1px 4px rgba(76, 175, 80, 0.05);
   transition: box-shadow 0.2s;
 }
+.categories-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
 
+.category-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.category-checkbox:hover {
+  background: #e0e0e0;
+}
+
+.category-checkbox input {
+  cursor: pointer;
+}
 .admin-events form:hover {
   box-shadow: 0 3px 10px rgba(76,175,80,0.11);
 }
+.checkbox-container {
+  display: flex;
+  gap: 10px;
+}
 
+.checkbox-input {
+  align-items: center;
+  cursor: pointer;
+  padding-top: 1px;
+  height: 18px;
+  width: 18px;
+}
+
+.checkbox-label {
+  cursor: pointer;
+  user-select: none;
+}
 /* Лейблы и поля */
 .admin-events label {
   font-weight: 500;
@@ -143,9 +182,22 @@
 /* Карточки событий */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  align-items: stretch; 
+}
+
+
+@media (min-width: 992px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+app-event-card {
+  display: flex;
+  height: 100%;
 }
 
 @media (max-width: 900px) {
@@ -168,7 +220,7 @@
   }
 }
 
-/* File preview image */
+
 .admin-events img[alt="Превью"] {
   border-radius: 6px;
   border: 1.5px solid var(--primary-color);
@@ -245,7 +297,7 @@ textarea.ng-invalid.ng-touched {
   display: none;
 }
 
-/* Информация о файле */
+
 .file-upload__info {
   margin-bottom: 15px;
 }
@@ -271,7 +323,7 @@ textarea.ng-invalid.ng-touched {
   font-size: 12px;
 }
 
-/* Прогресс загрузки */
+
 .file-upload__progress {
   width: 100%;
   margin-top: 5px;

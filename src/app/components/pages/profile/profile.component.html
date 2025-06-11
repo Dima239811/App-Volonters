@@ -1,7 +1,7 @@
 <app-navbar [isLoggedIn]="true"></app-navbar>
 
 <div class="container">
-  <!-- Personal Information with Photo -->
+
   <div class="content-box">
     <div class="section-title">
       Личная информация
@@ -44,14 +44,14 @@
     </div>
   </div>
 
-  <!-- My Events -->
+ 
   <div class="content-box" *ngIf="!isAdmin()">
     <div class="section-title">
       Мои мероприятия
       <a [routerLink]="['/']" fragment="events" class="btn btn-outline">Найти новые мероприятия</a>
     </div>
     <div class="event-list">
-      <app-event-card *ngFor="let event of userEvents" [event]="event" [showStatus]="true"></app-event-card>
+      <app-event-card *ngFor="let event of userEvents" [event]="event" [showStatus]="true" (eventDeleted)="onEventDeleted($event)"></app-event-card>
     </div>
   </div>
 
@@ -59,10 +59,14 @@
   <div class="content-box" *ngIf="isAdmin()">
     <div class="section-title">
       Проводимые мероприятия
-      <a [routerLink]="['/']" fragment="events" class="btn btn-outline">просмотреть другие мероприятия</a>
     </div>
     <div class="event-list">
-      <app-event-card *ngFor="let event of userEvents" [event]="event" [showStatus]="true"></app-event-card>
+      <app-event-card 
+        *ngFor="let event of userEvents" 
+        [event]="event" 
+        [showStatus]="true"
+        (eventDeleted)="onEventDeleted($event)">
+      </app-event-card>
     </div>
   </div>
 </div>

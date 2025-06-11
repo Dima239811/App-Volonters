@@ -11,7 +11,7 @@ import { UserService } from '../../../services/user.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EditProfileModalComponent } from '../../shared/edit-profile-modal/edit-profile-modal.component';
 import { AuthService } from '../../../services/auth.service';
-import { EventService } from '../../../services/event.service'; // Добавляем сервис событий
+import { EventService } from '../../../services/event.service'; 
 
 @Component({
   selector: 'app-profile',
@@ -40,14 +40,14 @@ export class ProfileComponent implements OnInit {
   userEvents: Event[] = [];
   loading = true;
   error: string | null = null;
-  isEditingEvent = false; // Для модалки редактирования события
-  currentEditingEvent: Event | null = null; // Текущее редактируемое событие
+  isEditingEvent = false; 
+  currentEditingEvent: Event | null = null; 
 
   constructor(
     private profileService: ProfileService,
     private userService: UserService,
     private authService: AuthService,
-    private eventService: EventService // Добавляем сервис событий
+    private eventService: EventService 
   ) {}
 
   ngOnInit(): void {
@@ -90,7 +90,7 @@ export class ProfileComponent implements OnInit {
     }
 
     if (this.isAdmin()) {
-      // Для организатора загружаем события, которые он создал
+
       this.eventService.getEventsByOrganizer(userId).subscribe({
         next: (events) => {
           this.userEvents = events;
@@ -102,7 +102,7 @@ export class ProfileComponent implements OnInit {
         }
       });
     } else {
-      // Для волонтера загружаем события, на которые он записан
+
       this.profileService.getUserEvents(userId).subscribe({
         next: (events) => {
           this.userEvents = events;
@@ -156,7 +156,11 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
+  onEventDeleted(deletedEventId: number): void {
+    this.userEvents = this.userEvents.filter(event => event.id !== deletedEventId);
+  }
 
+  
   // Профиль
   isEditing = false;
   openEditModal(): void {

@@ -24,7 +24,7 @@ export class LoginComponent {
   showPassword = false;
   emailError = '';
   passwordError = '';
-  isLoading = false; // Добавляем индикатор загрузки
+  isLoading = false; 
   
   constructor(
     private router: Router,
@@ -66,7 +66,6 @@ export class LoginComponent {
   this.emailError = '';
   this.passwordError = '';
 
-  // Не хэшируем пароль, а будем сравнивать с хэшем из базы
   const plainPassword = this.loginData.password;
 
   this.userService.login(this.loginData.email).subscribe({
@@ -89,7 +88,7 @@ export class LoginComponent {
 
         // Перенаправление по роли:
         if (user.role === 'organization') {
-          this.router.navigate(['/admin']); // Страница админа
+          this.router.navigate(['/profile']); // Страница админа
         } else {
           this.router.navigate(['/profile']); // Обычные пользователи
         }

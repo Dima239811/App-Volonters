@@ -1,6 +1,6 @@
 <div class="modal-backdrop">
   <div class="modal-content">
-    <button class="close-button" (click)="cancel.emit()">×</button>
+    <button type="button" class="close-button" (click)="cancel.emit()">×</button>
     <h2>Редактировать профиль</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSave()">

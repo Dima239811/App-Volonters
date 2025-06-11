@@ -1,8 +1,11 @@
 <div class="card">
+     <div *ngIf="!hasOrganizationStatus() && isOnProfilePage" class="unregister-btn" (click)="confirmUnregister()">
+        <i class="fas fa-times"></i>
+    </div>
     <div class="card-img">
         <img [src]="getEventImageUrl(event.imageUrl)" [alt]="event.title">
         <span *ngIf="showStatus" class="event-status status-upcoming">{{event.status}}</span>
-        <span class="leaf-icon"><i class="fas fa-leaf"></i></span>
+        <span *ngIf="eco()" class="leaf-icon"><i class="fas fa-leaf"></i></span>
     </div>
     <div class="card-content">
         <div class="card-date">{{ event.date }} | {{ event.time }}</div>
@@ -10,56 +13,89 @@
         <p>{{ event.description }}</p>
         <p><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
     </div>
-    
+
     <div class="card-footer">
-    <span class="badge" [ngClass]="{'badge-success': !event.isUrgent, 'badge-danger': event.isUrgent}">
-        {{ event.isUrgent ? 'Срочно' : event.category }}
-    </span>
-    
-    <!-- Кнопка для волонтёра или неавторизованного -->
-<button 
-    *ngIf="!hasOrganizationStatus() && !isRegistered"
-    (click)="handleParticipation()"
-    class="participate-btn btn btn-success"
-    [disabled]="isLoading">
-    Участвовать
-    </button>
-    <span *ngIf="!hasOrganizationStatus() && isRegistered" class="badge-registered">
-        Вы записаны
-    </span>
+        <span *ngIf="event.isUrgent" class="badge badge-danger">Срочно</span>
+        <span *ngIf="!event.isUrgent">
+            <span *ngFor="let category of event.category" class="badge badge-success">
+                {{ category }}
+            </span>
+        </span>
 
-    <!-- Кнопка для организатора -->
-    <button 
-        *ngIf="hasOrganizationStatus() && isOnProfilePage"
-        (click)="handleEventDelete()"
-        class="participate-btn btn btn-danger"
-        [disabled]="isLoading">
-        Удалить
-    </button>
-    
-    <!-- <span *ngIf="isRegistered" class="badge-registered">
-        Вы записаны
-    </span> -->
+        <!-- Кнопка для волонтёра или неавторизованного -->
+        <button *ngIf="!hasOrganizationStatus() && !isRegistered" (click)="handleParticipation()"
+            class="participate-btn btn btn-success" [disabled]="isLoading">
+            Участвовать
+        </button>
+        <span *ngIf="!hasOrganizationStatus() && isRegistered" class="badge-registered">
+            Вы записаны
+        </span>
+
+        <!-- Кнопка для организатора -->
+        <div >
+            <div class="footer-buttons" *ngIf="hasOrganizationStatus() && isOnProfilePage">
+                <button *ngIf="hasOrganizationStatus() && isOnProfilePage" (click)="openParticipantsModal()"
+                    class="btn participants-btnss">
+                    Участники
+                </button>
+                <button *ngIf="hasOrganizationStatus() && isOnProfilePage" (click)="handleEventDelete()"
+                    class="participate-btn btn btn-danger" [disabled]="isLoading">
+                    Удалить
+                </button>
+
+
+            </div>
+        </div>
+
+    </div>
+
 </div>
 
-</div>
-
-<app-confirmation-modal 
-    [isOpen]="isModalOpen"
-    (confirmed)="confirmParticipation()"
-    (closed)="closeModal()"
-    [isLoading]="isLoading"
->
+<app-confirmation-modal [isOpen]="isModalOpen" (confirmed)="confirmParticipation()" (closed)="closeModal()"
+    [isLoading]="isLoading">
     <div class="modal-content">
         <p>Вы уверены, что хотите записаться на событие <strong>{{ event.title }}</strong>?</p>
-        
+
         <div *ngIf="isLoading" class="spinner-container">
             <div class="spinner"></div>
             <span>Идет запись...</span>
         </div>
-        
+
         <div *ngIf="registrationError" class="alert alert-danger">
             {{ registrationError }}
         </div>
     </div>
 </app-confirmation-modal>
+
+
+<div *ngIf="isParticipantsModalOpen" class="modal-backdrop" (click)="closeParticipantsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Участники события "{{ event.title }}"</h3>
+            <span class="close" (click)="closeParticipantsModal()">&times;</span>
+        </div>
+
+        <div class="modal-body">
+            <div class="participants-header">
+
+                <button (click)="toggleSortDirection()" class="sort-btn">
+                    Сортировать {{ sortDirection === 'asc' ? '↓' : '↑' }}
+                </button>
+            </div>
+
+            <div *ngIf="isLoadingParticipants" class="loading-spinner">
+                Загрузка участников...
+            </div>
+
+            <div *ngIf="!isLoadingParticipants" class="participants-list">
+                <div *ngFor="let participant of participants" class="participant-item">
+                    <div class="participant-avatar">
+                        {{ participant.name.charAt(0).toUpperCase() }}
+                    </div>
+                    <span>{{ participant.name }}</span>
+                    <span>{{ participant.tel }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

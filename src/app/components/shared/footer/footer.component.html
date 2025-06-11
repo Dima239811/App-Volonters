@@ -6,11 +6,11 @@
                 <p>ДоброДело - платформа, которая объединяет волонтеров и организаторов мероприятий для создания
                     лучшего будущего.</p>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-telegram"></i></a>
-                    <a href="#"><i class="fab fa-vk"></i></a>
+                    <a><i class="fab fa-facebook-f"></i></a>
+                    <a><i class="fab fa-twitter"></i></a>
+                    <a><i class="fab fa-instagram"></i></a>
+                    <a><i class="fab fa-telegram"></i></a>
+                    <a><i class="fab fa-vk"></i></a>
                 </div>
             </div>
             <div class="footer-section">
@@ -19,8 +19,8 @@
                     <li><a [routerLink]="['/']">Главная</a></li>
                     <li><a [routerLink]="['/']" fragment="events">Мероприятия</a></li>
                     <li><a [routerLink]="['/']" fragment="how-it-works">Как это работает</a></li>
-                    <li><a href="#">О нас</a></li>
-                    <li><a href="#">Контакты</a></li>
+                    <li><a>О нас</a></li>
+                    <li><a>Контакты</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -34,9 +34,9 @@
             <div class="footer-section">
                 <h3>Подписка на новости</h3>
                 <p>Получайте информацию о новых мероприятиях и возможностях</p>
-                <form class="newsletter-form" (ngSubmit)="$event.preventDefault()">
+                <form class="newsletter-form" (ngSubmit)="onSubmit()">
                     <div class="form-group">
-                        <input type="email" placeholder="Ваш email" required>
+                        <input type="email" [(ngModel)]="email" placeholder="Ваш email" required name="email">
                         <button type="submit" class="btn btn-primary">Подписаться</button>
                     </div>
                 </form>
@@ -46,8 +46,8 @@
             <p>&copy; {{ currentYear }} ДоброДело. Все права защищены.</p>
         </div>
         <div class="footer-bottom-links">
-            <a href="#">Политика конфиденциальности </a>
-            <a href="#"> Условия использования</a>
+            <a>Политика конфиденциальности </a>
+            <a> Условия использования</a>
         </div>
     </div>
 </footer>

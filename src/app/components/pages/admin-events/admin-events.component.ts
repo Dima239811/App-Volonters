@@ -8,6 +8,7 @@ import { EventCardComponent } from '../../shared/event-card/event-card.component
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { AuthService } from '../../../services/auth.service';
 
+
 @Component({
   selector: 'app-admin-events',
   standalone: true,
@@ -27,14 +28,28 @@ export class AdminEventsComponent implements OnInit {
   minDate: string;
   selectedFile: File | null = null;
   previewUrl: string | null = null;
-
+  availableCategories: string[] = [
+    'Экология',
+    'Защита животных',
+    'Образование',
+    'Социальная помощь',
+    'Здравоохранение',
+    'Концерт',
+    'Культура и искусство ',
+    'Организация мероприятий',
+    'Спорт',
+    'Медиан и It',
+    'Лекция',
+    'Помощь в ЧС',
+    'Мастер-класс'
+  ];
   constructor(
     private fb: FormBuilder,
     private uploadService: UploadService,
     private eventService: EventService,
     private authService: AuthService,
   ) {
-    // Устанавливаем минимальную дату - сегодня
+
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
     this.eventForm = this.fb.group({
@@ -43,15 +58,35 @@ export class AdminEventsComponent implements OnInit {
       date: ['', [Validators.required, this.futureDateValidator]],
       time: ['', [Validators.required, this.validTimeValidator]],
       location: ['', [Validators.required, Validators.minLength(3)]],
-      category: ['', Validators.required],
+      category: [[], Validators.required],
       imageUrl: [''],
-      isUrgent: ['нет'],
+      isUrgent: false,
       status: ['активно']
     });
   }
 
   ngOnInit(): void {
     this.loadEvents();
+  }
+
+  onCategoryChange(event: any, category: string): void {
+    const categoriesControl = this.eventForm.get('category');
+    const currentCategories: string[] = categoriesControl?.value || [];
+
+    if (event.target.checked) {
+      // Добавляем категорию, если чекбокс отмечен
+      categoriesControl?.setValue([...currentCategories, category]);
+    } else {
+      // Удаляем категорию, если чекбокс снят
+      categoriesControl?.setValue(currentCategories.filter(c => c !== category));
+    }
+    categoriesControl?.markAsTouched();
+  }
+
+  // Метод для проверки, выбрана ли категория
+  isCategorySelected(category: string): boolean {
+    const selectedCategories: string[] = this.eventForm.get('categories')?.value || [];
+    return selectedCategories.includes(category);
   }
 
   // Валидатор для проверки что дата в будущем
@@ -110,7 +145,7 @@ export class AdminEventsComponent implements OnInit {
         return;
       }
 
-      // Проверка размера файла (например, до 5MB)
+
       if (selected.size > 5 * 1024 * 1024) {
         this.uploadError = 'Размер файла не должен превышать 5MB';
         this.selectedFile = null;
@@ -139,7 +174,7 @@ export class AdminEventsComponent implements OnInit {
     }
   }
   removeImage(): void {
-    // Получаем элемент input file
+
     const fileInput = document.querySelector('.file-upload__input') as HTMLInputElement;
 
     // Полный сброс состояния
@@ -149,7 +184,7 @@ export class AdminEventsComponent implements OnInit {
     this.uploadError = '';
     this.eventForm.patchValue({ imageUrl: '' });
 
-    // Важно: сбрасываем значение input элемента
+
     if (fileInput) {
       fileInput.value = '';
     }
@@ -171,11 +206,13 @@ export class AdminEventsComponent implements OnInit {
       return;
     }
 
+
     const eventData = {
       ...this.eventForm.value,
       datetime: this.combineDateAndTime(this.eventForm.value.date, this.eventForm.value.time),
-      participantIds: [], // Инициализируем пустой массив участников
+      participantIds: [],
     };
+
 
     this.createError = '';
     this.loading = true;
@@ -183,19 +220,27 @@ export class AdminEventsComponent implements OnInit {
     this.eventService.createEvent(eventData, creatorId).subscribe({
       next: () => {
         this.eventForm.reset({
-          isUrgent: 'нет',
-          status: 'активно'
+          isUrgent: false,
+          status: 'активно',
+          category: []
         });
         this.uploadedImageUrl = null;
         this.loading = false;
         this.loadEvents();
         this.removeImage();
+        this.resetCheckboxes();
       },
       error: (err) => {
         this.createError = 'Ошибка при создании события';
         this.loading = false;
         console.error('Ошибка:', err);
       }
+    });
+  }
+  private resetCheckboxes(): void {
+    const checkboxes = document.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name="category"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
     });
   }
 

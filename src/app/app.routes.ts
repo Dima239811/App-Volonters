@@ -7,12 +7,13 @@ import { ErrorComponent } from './components/pages/error/error.component';
 import { ProfileComponent } from './components/pages/profile/profile.component';
 import { AdminEventsComponent } from './components/pages/admin-events/admin-events.component';
 import { OrganizerGuard } from './organizer.guard';
+import { AuthGuard } from '../auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
-  { path: 'profile', component: ProfileComponent },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'error', component: ErrorComponent },
   { path: 'admin', component: AdminEventsComponent, canActivate: [OrganizerGuard]},
   { path: '**', redirectTo: '' },

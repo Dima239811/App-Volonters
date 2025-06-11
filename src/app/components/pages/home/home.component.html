@@ -27,21 +27,25 @@
         
         <div class="card-grid">
             <!-- Если есть события -->
-            <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
+            <app-event-card *ngFor="let event of displayedEvents" [event]="event"></app-event-card>
             
             <!-- Если нет событий -->
-            <div *ngIf="!loading && !error && events.length === 0" class="no-events">
+            <div *ngIf="!loading && !error && allEvents.length === 0" class="no-events">
                 <p>В данный момент нет доступных мероприятий</p>
             </div>
         </div>
         
-        <div style="text-align: center; margin-top: 40px;">
-            <a routerLink="/events" class="btn btn-primary">Смотреть все мероприятия</a>
-        </div>
+        <div style="text-align: center; margin-top: 20px;">
+        <button *ngIf="canLoadMore()" (click)="loadMoreEvents()" class="btn btn-secondary">
+            Загрузить ещё
+        </button>
+</div>
+
+
     </div>
 </section>
 
-<!-- How it works section -->
+
 <section class="section how-it-works" id="how-it-works">
     <div class="container">
         <div class="section-header">
@@ -69,7 +73,7 @@
     </div>
 </section>
 
-<!-- Testimonials section -->
+
 <section class="section testimonials">
     <div class="container">
         <div class="section-header">
