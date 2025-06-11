@@ -1,64 +1,33 @@
-# Dobrodelo
+# 📁 Проект: Веб-приложение для организации волонтерских мероприятий
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+## 📌 Описание
 
-## Development server
+Данный проект представляет собой веб-приложение, для которого я выполнил следующие задачи:
 
-To start a local development server, run:
+### 🔧 Мои задачи
 
-```bash
-ng serve
-```
+- 🎨 **Разработка дизайна интерфейса:**
+  - Создание макетов в Figma
+  - Подбор визуального стиля (цвета, шрифты, элементы)
+  - Проработка UX для ключевых экранов
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- 🚀 **Настройка сервера на Express.js:**
+  - Инициализация backend-проекта
+  - Реализация базовых API-эндпоинтов
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 💻 Используемые технологии
 
-```bash
-ng generate component component-name
-```
+- **Figma** — инструмент для дизайна интерфейса  
+- **Express.js** — Node.js-фреймворк для сервера  
+- **Angular** — фреймворк разработки
+- **Git** — система контроля версий
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 📷 Примеры макетов
 
-## Building
+[🔗 Ссылка на макеты в Figma](https://www.figma.com/design/h2qVcokt3Om7105Ha5Ero1/%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B9-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82?node-id=0-1&t=wZuEYxIx6N2ApBtH-1)*_
 
-To build the project run:
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-
-# Что добавить?
-## Добавить возможность изменять событие организатором
-## добавить счетчики на кол-во человек(можно забить)
-## смотрите сами -_-

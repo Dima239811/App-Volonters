@@ -8,18 +8,20 @@
       "city": "Москва",
       "password": "$2b$10$W9p2j8GmYT/XKW6SxbJr4ungJMJWKP03aEXomheh2OgDe1Egh4yvy",
       "eventIds": [],
-      "aboutMe": "",
+      "aboutMe": "увлекаюсь волонтерством",
       "interests": [
         "social",
         "animals",
         "health",
         "sport",
-        "education"
+        "education",
+        "ecology",
+        "events"
       ],
       "role": "volunteer",
       "agreeTerms": true,
       "agreeNewsletter": false,
-      "profileImage": "/uploads/profile/1749638511736-816352636.jpg"
+      "profileImage": "/uploads/profile/1749639485133-453716856.jpg"
     },
     {
       "id": "9e56",
@@ -46,19 +48,21 @@
         "1896",
         "42ab",
         "9454",
-        "2bd8"
+        "2bd8",
+        "20aa"
       ],
       "aboutMe": "",
       "interests": [
         "health",
         "media",
         "education",
-        "culture"
+        "culture",
+        "sport"
       ],
       "role": "organization",
       "agreeTerms": true,
       "agreeNewsletter": false,
-      "profileImage": "/uploads/profile/1749638375069-707435371.jpeg"
+      "profileImage": "/uploads/profile/1749643976400-692863221.jpeg"
     },
     {
       "id": "517b",
@@ -114,7 +118,9 @@
       "imageUrl": "/uploads/events/1749380023653-177317938.jpg",
       "isUrgent": false,
       "status": "активно",
-      "participantIds": []
+      "participantIds": [
+        "b3d5"
+      ]
     },
     {
       "id": "2b1c",
