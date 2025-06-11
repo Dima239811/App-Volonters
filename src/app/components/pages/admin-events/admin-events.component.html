@@ -1,0 +1,177 @@
+<app-navbar></app-navbar>
+
+<div class="admin-events">
+  <h2>Создать новое событие</h2>
+  <form [formGroup]="eventForm" (ngSubmit)="submitEvent()">
+    <!-- Название события -->
+    <div>
+      <label for="title">Название события:</label>
+      <input id="title" formControlName="title" required>
+      <div *ngIf="title?.invalid && (title?.dirty || title?.touched)" class="error-message">
+        <div *ngIf="title?.errors?.['required']">Название обязательно</div>
+        <div *ngIf="title?.errors?.['minlength']">
+          Минимальная длина - {{title?.errors?.['minlength'].requiredLength}} символов
+        </div>
+      </div>
+    </div>
+
+    <!-- Описание -->
+    <div>
+      <label for="description">Описание:</label>
+      <textarea id="description" formControlName="description" required></textarea>
+      <div *ngIf="description?.invalid && (description?.dirty || description?.touched)" class="error-message">
+        <div *ngIf="description?.errors?.['required']">Описание обязательно</div>
+        <div *ngIf="description?.errors?.['minlength']">
+          Минимальная длина - {{description?.errors?.['minlength'].requiredLength}} символов
+        </div>
+      </div>
+    </div>
+
+    <!-- Дата -->
+    <div>
+      <label for="date">Дата:</label>
+      <input id="date" type="date" [min]="minDate" formControlName="date" required>
+      <div *ngIf="date?.invalid && (date?.dirty || date?.touched)" class="error-message">
+        <div *ngIf="date?.errors?.['required']">Дата обязательна</div>
+        <div *ngIf="date?.errors?.['pastDate']">Нельзя выбирать прошедшую дату</div>
+      </div>
+    </div>
+
+    <!-- Время -->
+    <div>
+      <label for="time">Время:</label>
+      <input id="time" type="time" formControlName="time" required>
+      <div *ngIf="time?.invalid && (time?.dirty || time?.touched)" class="error-message">
+        <div *ngIf="time?.errors?.['required']">Время обязательно</div>
+        <div *ngIf="time?.errors?.['invalidTime']">Введите корректное время в формате HH:MM</div>
+      </div>
+    </div>
+
+    <!-- Место проведения -->
+    <div>
+      <label for="location">Место проведения:</label>
+      <input id="location" formControlName="location" required>
+      <div *ngIf="location?.invalid && (location?.dirty || location?.touched)" class="error-message">
+        <div *ngIf="location?.errors?.['required']">Место проведения обязательно</div>
+        <div *ngIf="location?.errors?.['minlength']">
+          Минимальная длина - {{location?.errors?.['minlength'].requiredLength}} символов
+        </div>
+      </div>
+    </div>
+
+    <!-- Категория -->
+    <div>
+      <label>Категории:</label>
+      <div class="categories-container">
+        <label *ngFor="let category of availableCategories" class="category-checkbox">
+          <input 
+            type="checkbox" 
+            name="category"
+            [value]="category" 
+            (change)="onCategoryChange($event, category)"
+            [checked]="isCategorySelected(category)"
+          >
+          {{category}}
+        </label>
+      </div>
+      <input type="hidden" formControlName="category">
+      <div *ngIf="category?.invalid && (category?.dirty || category?.touched)" class="error-message">
+        <div *ngIf="category?.errors?.['required']">Выберите хотя бы одну категорию</div>
+      </div>
+    </div>
+
+    <!-- Срочно? -->
+  <div class="checkbox-container">
+    <label for="isUrgent" class="checkbox-label"><u><b>Срочно</b></u> ?</label>
+    <div class="checkbox-input">
+      <input 
+        type="checkbox" 
+        id="isUrgent" 
+        formControlName="isUrgent"
+        
+      >
+    </div>
+  </div>
+
+<!-- Изображение -->
+  <div class="file-upload">
+  <label class="file-upload__label">
+    <span class="file-upload__text">
+      {{ selectedFile ? 'Изменить изображение' : 'Выберите изображение' }}
+    </span>
+    <input type="file" 
+           (change)="onFileSelected($event)" 
+           [disabled]="uploadInProgress"
+           class="file-upload__input"
+           accept="image/*">
+    <span class="file-upload__icon">📁</span>
+  </label>
+  
+  <div *ngIf="selectedFile" class="file-upload__info">
+    <div class="file-upload__name">
+      <span class="file-upload__name-text">{{ selectedFile.name }}</span>
+      <span class="file-upload__size">({{ getFileSize(selectedFile.size) }})</span>
+    </div>
+    
+    <div *ngIf="uploadInProgress" class="file-upload__progress">
+      <div class="file-upload__progress-bar"></div>
+      <span>Загрузка...</span>
+    </div>
+  </div>
+  
+  <div *ngIf="previewUrl" class="file-upload__preview">
+    <img [src]="previewUrl" alt="Превью изображения" class="file-upload__preview-image">
+    <button *ngIf="!uploadInProgress" 
+            class="file-upload__remove"
+            (click)="removeImage()">
+      × 
+    </button>
+  </div>
+  
+  <div *ngIf="uploadError" class="file-upload__error">
+    {{ uploadError }}
+  </div>
+</div>
+
+    <button type="submit" [disabled]="eventForm.invalid || uploadInProgress" class="btn btn-primary">
+      Создать событие
+    </button>
+    <span *ngIf="createError" style="color:red;">{{createError}}</span>
+  </form>
+
+  <hr>
+
+  <section class="section" id="events">
+    <div class="container">
+      <div class="section-header">
+        <h2>Актуальные мероприятия</h2>
+        <p>Выберите мероприятие, которое вам по душе, и присоединяйтесь к волонтерам</p>
+      </div>
+      
+      <!-- Состояние загрузки -->
+      <div *ngIf="loading" class="loading-spinner">
+        <p>Загрузка мероприятий...</p>
+      </div>
+      
+      <!-- Состояние ошибки -->
+      <div *ngIf="error" class="error-message">
+        <p>{{ error }}</p>
+        <button (click)="loadEvents()">Попробовать снова</button>
+      </div>
+      
+      <div class="card-grid">
+        <!-- Если есть события -->
+        <app-event-card *ngFor="let event of events" [event]="event" (eventDeleted)="onEventDeleted()"></app-event-card>
+        
+        <!-- Если нет событий -->
+        <div *ngIf="!loading && !error && events.length === 0" class="no-events">
+          <p>В данный момент нет доступных мероприятий</p>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 40px;">
+        <!-- <a routerLink="/events" class="btn btn-primary">Смотреть все мероприятия</a> -->
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,198 @@
+{
+  "users": [
+    {
+      "id": "b3d5",
+      "fullName": "Иван Иванов",
+      "email": "user@mail.ru",
+      "phone": "+79922344567",
+      "city": "Москва",
+      "password": "$2b$10$W9p2j8GmYT/XKW6SxbJr4ungJMJWKP03aEXomheh2OgDe1Egh4yvy",
+      "eventIds": [],
+      "aboutMe": "",
+      "interests": [
+        "social",
+        "animals",
+        "health",
+        "sport",
+        "education"
+      ],
+      "role": "volunteer",
+      "agreeTerms": true,
+      "agreeNewsletter": false,
+      "profileImage": "/uploads/profile/1749638511736-816352636.jpg"
+    },
+    {
+      "id": "9e56",
+      "fullName": "Екатерина Зайцева",
+      "email": "admin@mail.ru",
+      "phone": "+79871234567",
+      "city": "Владивосток",
+      "password": "$2b$10$vSQ39kGWwSw1MSx2PPmiRef9BMtM2TbTE8uUAFMRpvRbUBTT1Zr7C",
+      "eventIds": [
+        "f401",
+        "51af",
+        "9370",
+        "99ea",
+        "dec8",
+        "9b9b",
+        "f875",
+        "e6ca",
+        "2b1c",
+        "d2f6",
+        "d020",
+        "cc06",
+        "9cd8",
+        "736a",
+        "1896",
+        "42ab",
+        "9454",
+        "2bd8"
+      ],
+      "aboutMe": "",
+      "interests": [
+        "health",
+        "media",
+        "education",
+        "culture"
+      ],
+      "role": "organization",
+      "agreeTerms": true,
+      "agreeNewsletter": false,
+      "profileImage": "/uploads/profile/1749638375069-707435371.jpeg"
+    },
+    {
+      "id": "517b",
+      "fullName": "Петр",
+      "email": "user@a.ru",
+      "phone": "+79655552837",
+      "city": "Анапа",
+      "password": "$2b$10$R7PGtJgvQEi03vMFm.dPWuvTk3AFPfwKxvkIjCe/AwUxx4TqNhp4C",
+      "eventIds": [],
+      "aboutMe": "",
+      "interests": [
+        "animals",
+        "social",
+        "sport"
+      ],
+      "role": "volunteer",
+      "agreeTerms": true,
+      "agreeNewsletter": false
+    }
+  ],
+  "events": [
+    {
+      "id": "f401",
+      "title": "IV Международный Moscow Jazz Festival",
+      "description": "С 27 по 30 июня 2025 года в Москве пройдёт крупнейший джазовый фестиваль с участием мировых звёзд.",
+      "date": "2025-06-27",
+      "time": "12:00",
+      "location": "Москва",
+      "category": [
+        "Концерт",
+        "Культура и искусство"
+      ],
+      "imageUrl": "/uploads/events/1749379873425-364446837.jpg",
+      "isUrgent": false,
+      "status": "активно",
+      "participantIds": [
+        "517b",
+        "b3d5"
+      ]
+    },
+    {
+      "id": "51af",
+      "title": "Startup Village",
+      "description": "Международная площадка для встреч стартапов с инвесторами и корпорациями. 11-12 июля 2025 в Москве.",
+      "date": "2025-07-11",
+      "time": "12:00",
+      "location": "Москва",
+      "category": [
+        "Лекция",
+        "Мастер-класс",
+        "Образование"
+      ],
+      "imageUrl": "/uploads/events/1749380023653-177317938.jpg",
+      "isUrgent": false,
+      "status": "активно",
+      "participantIds": []
+    },
+    {
+      "id": "2b1c",
+      "title": "ЭКОСУББОТНИК В УРЕНСКОМ РАЙОНЕ",
+      "description": "Добровольческая акция по очистке природных территорий. Формируем экологическую культуру вместе!",
+      "date": "2025-06-14",
+      "time": "09:00",
+      "location": "Нижний Новгород",
+      "category": [
+        "Экология",
+        "Социальная помощь"
+      ],
+      "imageUrl": "/uploads/events/1749381618333-289258507.jpg",
+      "isUrgent": false,
+      "status": "активно",
+      "participantIds": [
+        "b3d5"
+      ]
+    },
+    {
+      "id": "d2f6",
+      "title": "Игра «Путешествуем по России»",
+      "description": "Просветительский проект по популяризации истории и культурного наследия регионов России.",
+      "date": "2025-06-16",
+      "time": "12:00",
+      "location": "Нижний Новгород",
+      "category": [
+        "Образование",
+        "Организация мероприятий"
+      ],
+      "imageUrl": "/uploads/events/1749381732575-826140130.jpeg",
+      "isUrgent": false,
+      "status": "активно"
+    },
+    {
+      "id": "d020",
+      "title": "Слет Всемирного фестиваля молодежи",
+      "description": "Присоединяйтесь к команде волонтеров крупнейшего молодежного события этого года!",
+      "date": "2025-09-06",
+      "time": "12:00",
+      "location": "Нижний Новгород",
+      "category": [
+        "Организация мероприятий"
+      ],
+      "imageUrl": "/uploads/events/1749381854587-156626069.jpg",
+      "isUrgent": false,
+      "status": "активно"
+    },
+    {
+      "id": "cc06",
+      "title": "Ликвидация разлива нефти в Краснодарском крае",
+      "description": "Набор волонтёров для помощи в уборке территорий, пострадавших от ЧС.",
+      "date": "2025-06-23",
+      "time": "12:00",
+      "location": "Краснодарский край",
+      "category": [
+        "Экология",
+        "Помощь в ЧС"
+      ],
+      "imageUrl": "/uploads/events/1749381959660-718118942.jpeg",
+      "isUrgent": false,
+      "status": "активно",
+      "participantIds": []
+    },
+    {
+      "id": "9cd8",
+      "title": "Опера \"Борис Годунов\"",
+      "description": "23 июня в Зале Зарядье прозвучит опера Мусоргского «Борис Годунов» в исполнении звёзд оперы.",
+      "date": "2025-06-23",
+      "time": "19:00",
+      "location": "Москва, Зарядье",
+      "category": [
+        "Культура и искусство",
+        "Концерт"
+      ],
+      "imageUrl": "/uploads/events/1749382061798-57714172.jpg",
+      "isUrgent": false,
+      "status": "активно"
+    }
+  ]
+}

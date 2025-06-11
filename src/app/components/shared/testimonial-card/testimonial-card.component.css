@@ -1,0 +1,26 @@
+.testimonial {
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    background-color: white;
+    height: 100%;
+  }
+  
+  .testimonial img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+  }
+  
+  .testimonial p {
+    font-style: italic;
+    margin-bottom: 15px;
+  }
+  
+  .testimonial-author {
+    font-weight: bold;
+    color: var(--primary-color);
+  }
